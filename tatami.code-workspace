@@ -1,0 +1,12 @@
+{
+  "folders": [
+    { "name": "backend", "path": "src/Tatami.Api" },
+    { "name": "domain", "path": "src/Tatami.Domain" },
+    { "name": "frontend", "path": "src/tatami-web" },
+    { "name": "infra", "path": "infra" },
+    { "name": "docs", "path": "docs" }
+  ],
+  "settings": {
+    "dotnet.defaultSolution": "Tatami.sln"
+  }
+}

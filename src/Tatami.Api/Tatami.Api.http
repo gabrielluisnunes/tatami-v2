@@ -1,0 +1,3 @@
+### Tatami API — health check
+
+GET {{Tatami.Api_HostAddress}}/health
