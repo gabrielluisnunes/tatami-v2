@@ -43,13 +43,25 @@ tatami-v2/
 ### Backend
 
 ```bash
+# 1. Subir Postgres, Redis e MinIO
+cp .env.example .env
+docker compose -f infra/docker/docker-compose.yml --env-file .env up -d
+
+# 2. Aplicar migrations
+dotnet ef database update \
+  --project src/Tatami.Infrastructure \
+  --startup-project src/Tatami.Api
+
+# 3. Rodar API (Rider ou terminal)
 cd src/Tatami.Api
 dotnet run
 ```
 
-API em `https://localhost:7xxx` (ver `launchSettings.json`).
+API em `http://localhost:5006` (profile `http`).
 
-Health check: `GET /health`
+Health check: `GET /health` (inclui status do PostgreSQL)
+
+Detalhes do Docker: `infra/docker/README.md`
 
 ### Frontend
 
