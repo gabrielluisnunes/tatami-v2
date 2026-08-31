@@ -7,8 +7,10 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Added
 
-- Scaffold monorepo: solution .NET (Domain, Application, Infrastructure, Api)
-- Endpoint `GET /health`
-- Projeto Angular `src/tatami-web`
-- Workspace multi-root `tatami.code-workspace`
-- Documentação inicial em `docs/architecture.md`
+- Docker Compose local: PostgreSQL 16, Redis 7, MinIO
+- EF Core + Npgsql conectando ao Postgres local
+- Migration inicial (`academies`, `students`)
+- `.env.example` documentado
+- Health check `/health` com verificação do banco
+
+## [2.0.0-scaffold] - 2026-08-30

@@ -37,11 +37,13 @@ Depende de **Domain**. Contém:
 
 ### Tatami.Infrastructure
 
-Depende de **Application**. Contém:
+Depende de **Application** e **Domain**. Contém:
 
-- **Persistence** — EF Core, migrations, repositórios
+- **Persistence** — EF Core, `TatamiDbContext`, migrations, repositórios
 - **Integrations** — Stripe, Resend, MinIO
 - **DependencyInjection** — registra infra na API
+
+Banco local: PostgreSQL via Docker (`infra/docker/docker-compose.yml`).
 
 ### Tatami.Api
 
