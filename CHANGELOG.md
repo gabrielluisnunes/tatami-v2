@@ -7,10 +7,11 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Added
 
-- Docker Compose local: PostgreSQL 16, Redis 7, MinIO
-- EF Core + Npgsql conectando ao Postgres local
-- Migration inicial (`academies`, `students`)
-- `.env.example` documentado
-- Health check `/health` com verificação do banco
+- Auth JWT: ASP.NET Identity + login, register, refresh, logout
+- Tabelas `users`, `roles`, `refresh_tokens` (migration AddIdentityAuth)
+- Tela de login Angular + interceptor Bearer
+- Swagger com autenticação JWT
+
+## [2.0.0-docker] - 2026-08-31
 
 ## [2.0.0-scaffold] - 2026-08-30
