@@ -32,6 +32,12 @@ public class AuthService : IAuthService
             throw new AuthException("Role inválida. Use: admin, professor ou aluno.");
         }
 
+        if (!string.Equals(request.Role, UserRole.Admin, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new AuthException(
+                "Cadastro público disponível apenas para administradores de academia.");
+        }
+
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser is not null)
         {
@@ -111,6 +117,19 @@ public class AuthService : IAuthService
 
         refreshToken.IsRevoked = true;
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<AuthResponse> IssueAuthResponseForUserAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            throw new AuthException("Usuário não encontrado.");
+        }
+
+        return await BuildAuthResponseAsync(user, cancellationToken);
     }
 
     private async Task<AuthResponse> BuildAuthResponseAsync(
