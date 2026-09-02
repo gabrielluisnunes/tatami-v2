@@ -61,6 +61,10 @@ API em `http://localhost:5006` (profile `http`).
 
 Health check: `GET /health` (inclui status do PostgreSQL)
 
+Endpoints de auth: `POST /api/auth/register`, `login`, `refresh`, `logout`
+
+Endpoints de academy: `POST /api/onboarding`, `GET /api/academies/me`, `PUT /api/academies/me`
+
 Detalhes do Docker: `infra/docker/README.md`
 
 ### Frontend

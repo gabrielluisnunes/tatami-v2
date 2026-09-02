@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -7,9 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Tatami.Application.Auth;
 using Tatami.Domain.Enums;
+using Tatami.Domain.Repositories;
 using Tatami.Infrastructure.Auth;
 using Tatami.Infrastructure.Identity;
 using Tatami.Infrastructure.Persistence;
+using Tatami.Infrastructure.Persistence.Repositories;
 
 namespace Tatami.Infrastructure;
 
@@ -61,6 +65,7 @@ public static class DependencyInjection
             })
             .AddJwtBearer(options =>
             {
+                options.MapInboundClaims = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -72,6 +77,8 @@ public static class DependencyInjection
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(jwtOptions.Secret)),
                     ClockSkew = TimeSpan.FromMinutes(1),
+                    NameClaimType = JwtRegisteredClaimNames.Sub,
+                    RoleClaimType = "role",
                 };
             });
 
@@ -79,6 +86,9 @@ public static class DependencyInjection
 
         services.AddScoped<JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAcademyRepository, AcademyRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IOnboardingRepository, OnboardingRepository>();
 
         return services;
     }
