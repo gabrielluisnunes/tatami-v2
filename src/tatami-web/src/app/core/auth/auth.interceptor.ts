@@ -1,7 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from './auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
-  const token = localStorage.getItem('tatami_access_token');
+  const authService = inject(AuthService);
+  const token = authService.getAccessToken();
 
   if (!token) {
     return next(request);
