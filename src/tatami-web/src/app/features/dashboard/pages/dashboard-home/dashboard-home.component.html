@@ -1,0 +1,24 @@
+<section class="home">
+  <header>
+    <h2>Olá, {{ adminName }}</h2>
+    @if (academy(); as academyData) {
+      <p>
+        Academia <strong>{{ academyData.name }}</strong>
+      </p>
+    } @else if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    } @else {
+      <p>Carregando academia...</p>
+    }
+  </header>
+
+  <div class="cards">
+    @for (card of cards; track card.label) {
+      <article>
+        <p class="label">{{ card.label }}</p>
+        <p class="value">{{ card.value }}</p>
+        <p class="hint">Disponível na {{ card.hint }}</p>
+      </article>
+    }
+  </div>
+</section>

@@ -5,6 +5,8 @@ export interface Academy {
   monthlyPrice: number;
   subscriptionStatus: string;
   ownerId: string;
+  plan?: string | null;
+  stripeCustomerId?: string | null;
 }
 
 export interface CreateOnboardingRequest {

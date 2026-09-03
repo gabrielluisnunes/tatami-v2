@@ -139,6 +139,8 @@ public class AuthService : IAuthService
         var roles = await _userManager.GetRolesAsync(user);
         var role = roles.FirstOrDefault() ?? UserRole.Aluno;
 
+        await SanitizeAcademyReferenceAsync(user, cancellationToken);
+
         var (accessToken, expiresAt) = _jwtTokenService.GenerateAccessToken(user, roles);
 
         var refreshTokenValue = JwtTokenService.GenerateRefreshToken();
@@ -159,6 +161,35 @@ public class AuthService : IAuthService
             refreshTokenValue,
             expiresAt,
             new AuthUserResponse(user.Id, user.Email ?? string.Empty, user.FullName, role, user.AcademyId));
+    }
+
+    private async Task SanitizeAcademyReferenceAsync(
+        ApplicationUser user,
+        CancellationToken cancellationToken)
+    {
+        if (!user.AcademyId.HasValue)
+        {
+            return;
+        }
+
+        var academyExists = await _dbContext.Academies
+            .AsNoTracking()
+            .AnyAsync(academy => academy.Id == user.AcademyId.Value, cancellationToken);
+
+        if (academyExists)
+        {
+            return;
+        }
+
+        user.AcademyId = null;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var message = string.Join(" ", result.Errors.Select(error => error.Description));
+            throw new AuthException(message);
+        }
     }
 }
 
