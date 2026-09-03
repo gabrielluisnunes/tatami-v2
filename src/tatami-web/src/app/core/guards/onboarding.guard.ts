@@ -32,7 +32,7 @@ export const onboardingCompleteGuard: CanActivateFn = () => {
   }
 
   if (!authService.needsOnboarding()) {
-    return router.createUrlTree(['/']);
+    return router.createUrlTree(['/dashboard']);
   }
 
   return true;

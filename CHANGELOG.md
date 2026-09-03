@@ -12,6 +12,9 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Academies: `GET /api/academies/me`, `PUT /api/academies/me`
 - Migration `ExpandAcademyAndOnboarding`
 - Tela Angular `/onboarding` + guards de fluxo pós-login
+- Dashboard admin: layout, sidebar, rotas `/dashboard/*` (stubs) e redirect pós-login/onboarding
+- FK `users.AcademyId` → `academies.Id` (ON DELETE SET NULL)
+- Login/refresh sanitiza `AcademyId` órfão e devolve o usuário para o onboarding
 
 ## [2.0.0-auth] - 2026-08-31
 

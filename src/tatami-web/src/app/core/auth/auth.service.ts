@@ -77,7 +77,7 @@ export class AuthService {
     }
 
     if (user.role === 'admin') {
-      return user.academyId ? '/' : '/onboarding';
+      return user.academyId ? '/dashboard' : '/onboarding';
     }
 
     if (user.role === 'professor') {

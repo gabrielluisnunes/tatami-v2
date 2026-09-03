@@ -77,6 +77,10 @@ npm start
 
 App em `http://localhost:4200`
 
+Fluxo admin: `/register` ou `/login` → `/onboarding` (se ainda não tem academia) → `/dashboard`.
+
+Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (alunos, financeiro, Stripe) entram nas issues seguintes.
+
 ### Solution completa (Rider)
 
 Abra `Tatami.sln` na raiz do repositório.

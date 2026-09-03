@@ -1,0 +1,59 @@
+<div class="shell">
+  <aside class="sidebar">
+    <app-dashboard-sidebar
+      [academyName]="academyName()"
+      [adminName]="adminName"
+      [currentPath]="currentPath()"
+      (logout)="logout()"
+    />
+  </aside>
+
+  <div class="main-column">
+    <header class="header-desktop">
+      <h1>{{ pageTitle() }}</h1>
+    </header>
+
+    <header class="header-mobile">
+      <span class="logo">Tatami</span>
+      <button type="button" class="icon-button" (click)="openDrawer()" aria-label="Abrir menu">
+        <app-dashboard-icon name="menu" />
+      </button>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Navegação rápida">
+    @for (item of bottomNavItems; track item.path) {
+      <a [routerLink]="item.path" [class.active]="isActive(item)">
+        <app-dashboard-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+    <button type="button" (click)="openDrawer()" [class.active]="drawerOpen()">
+      <app-dashboard-icon name="menu" />
+      <span>Menu</span>
+    </button>
+  </nav>
+
+  @if (drawerOpen()) {
+    <div class="overlay" (click)="closeDrawer()"></div>
+    <aside class="drawer">
+      <div class="drawer-header">
+        <span class="logo">Tatami</span>
+        <button type="button" class="icon-button" (click)="closeDrawer()" aria-label="Fechar menu">
+          ×
+        </button>
+      </div>
+      <app-dashboard-sidebar
+        [academyName]="academyName()"
+        [adminName]="adminName"
+        [currentPath]="currentPath()"
+        (navigated)="closeDrawer()"
+        (logout)="logout()"
+      />
+    </aside>
+  }
+</div>

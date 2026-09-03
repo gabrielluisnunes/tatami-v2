@@ -42,7 +42,7 @@ export class OnboardingComponent {
       next: (response: OnboardingResponse) => {
         this.authService.updateSession(response.auth);
         this.loading = false;
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/dashboard');
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;

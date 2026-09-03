@@ -1,0 +1,188 @@
+:host {
+  display: block;
+  font-family: system-ui, sans-serif;
+}
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f4f5;
+}
+
+.sidebar {
+  display: none;
+  width: 15rem;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e4e4e7;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar app-dashboard-sidebar {
+  flex: 1;
+  min-height: 0;
+}
+
+.main-column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header-desktop {
+  display: none;
+  height: 3rem;
+  align-items: center;
+  padding: 0 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e4e4e7;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-desktop h1 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #18181b;
+}
+
+.header-mobile {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 30;
+  display: flex;
+  height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  background: #fff;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.logo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #18181b;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: #71717a;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: #f4f4f5;
+}
+
+.content {
+  flex: 1;
+  padding: 4.5rem 1rem 6rem;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  z-index: 30;
+  display: flex;
+  background: #fff;
+  border-top: 1px solid #e4e4e7;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav a,
+.bottom-nav button {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0;
+  border: none;
+  background: transparent;
+  color: #a1a1aa;
+  text-decoration: none;
+  font-size: 0.625rem;
+  cursor: pointer;
+}
+
+.bottom-nav a.active,
+.bottom-nav button.active {
+  color: #18181b;
+  font-weight: 500;
+}
+
+.bottom-nav app-dashboard-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgb(0 0 0 / 25%);
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: 18rem;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #e4e4e7;
+}
+
+.drawer-header {
+  display: flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  border-bottom: 1px solid #f4f4f5;
+}
+
+.drawer app-dashboard-sidebar {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header-desktop {
+    display: flex;
+  }
+
+  .header-mobile,
+  .bottom-nav,
+  .overlay,
+  .drawer {
+    display: none;
+  }
+
+  .content {
+    padding: 1.5rem;
+  }
+}
