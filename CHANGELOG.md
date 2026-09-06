@@ -15,6 +15,9 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Dashboard admin: layout, sidebar, rotas `/dashboard/*` (stubs) e redirect pós-login/onboarding
 - FK `users.AcademyId` → `academies.Id` (ON DELETE SET NULL)
 - Login/refresh sanitiza `AcademyId` órfão e devolve o usuário para o onboarding
+- Stripe SaaS: campos `Plan`, `StripeCustomerId`, `StripeSubscriptionId`, `TrialEndsAt` na academy
+- Endpoints: `POST /api/stripe/checkout-session`, `POST /api/stripe/portal-session`, `POST /api/webhooks/stripe`
+- Onboarding passo 2 (Starter/Pro) + página `/dashboard/assinatura` (código pronto; `enforceSubscription` desligado no dev)
 
 ## [2.0.0-auth] - 2026-08-31
 

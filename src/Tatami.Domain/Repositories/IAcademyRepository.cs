@@ -8,6 +8,10 @@ public interface IAcademyRepository
 
     Task<Academy?> GetByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default);
 
+    Task<Academy?> GetByStripeSubscriptionIdAsync(
+        string stripeSubscriptionId,
+        CancellationToken cancellationToken = default);
+
     Task<Academy> CreateAsync(Academy academy, CancellationToken cancellationToken = default);
 
     Task<Academy> UpdateAsync(Academy academy, CancellationToken cancellationToken = default);

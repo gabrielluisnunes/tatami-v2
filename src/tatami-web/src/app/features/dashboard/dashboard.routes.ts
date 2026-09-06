@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './layout/dashboard-layout.component';
 import { DashboardHomeComponent } from './pages/dashboard-home/dashboard-home.component';
+import { DashboardAssinaturaComponent } from './pages/dashboard-assinatura/dashboard-assinatura.component';
 import { DashboardStubComponent } from './pages/dashboard-stub.component';
 
 export const dashboardRoutes: Routes = [
@@ -92,12 +93,7 @@ export const dashboardRoutes: Routes = [
       },
       {
         path: 'assinatura',
-        component: DashboardStubComponent,
-        data: {
-          title: 'Assinatura',
-          issue: 32,
-          description: 'Plano SaaS da academia (Stripe). O bloqueio de trial sem checkout entra nesta issue.',
-        },
+        component: DashboardAssinaturaComponent,
       },
     ],
   },

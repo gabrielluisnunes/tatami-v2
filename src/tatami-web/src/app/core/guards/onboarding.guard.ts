@@ -1,5 +1,10 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { AcademyService } from '../academy/academy.service';
+import { hasCompletedCheckout } from '../academy/academy.models';
 import { AuthService } from '../auth/auth.service';
 
 export const onboardingRequiredGuard: CanActivateFn = () => {
@@ -24,6 +29,7 @@ export const onboardingRequiredGuard: CanActivateFn = () => {
 
 export const onboardingCompleteGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
+  const academyService = inject(AcademyService);
   const router = inject(Router);
   const user = authService.getUser();
 
@@ -31,9 +37,20 @@ export const onboardingCompleteGuard: CanActivateFn = () => {
     return router.createUrlTree([authService.getRoleHomeRoute()]);
   }
 
-  if (!authService.needsOnboarding()) {
+  if (authService.needsOnboarding()) {
+    return true;
+  }
+
+  if (!environment.enforceSubscription) {
     return router.createUrlTree(['/dashboard']);
   }
 
-  return true;
+  return academyService.getMyAcademy().pipe(
+    map(academy =>
+      hasCompletedCheckout(academy)
+        ? router.createUrlTree(['/dashboard'])
+        : true,
+    ),
+    catchError(() => of(true)),
+  );
 };

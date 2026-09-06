@@ -80,7 +80,10 @@ public class OnboardingService : IOnboardingService
             academy.Sport.ToSlug(),
             academy.MonthlyPrice,
             academy.SubscriptionStatus,
-            academy.OwnerId);
+            academy.OwnerId,
+            academy.Plan,
+            academy.StripeCustomerId,
+            academy.TrialEndsAt);
 }
 
 public class AcademyService : IAcademyService

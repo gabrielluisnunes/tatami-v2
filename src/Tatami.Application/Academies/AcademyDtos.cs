@@ -16,7 +16,10 @@ public record AcademyResponse(
     string Sport,
     decimal MonthlyPrice,
     string SubscriptionStatus,
-    Guid OwnerId);
+    Guid OwnerId,
+    string? Plan,
+    string? StripeCustomerId,
+    DateTime? TrialEndsAt);
 
 public record OnboardingResponse(
     AcademyResponse Academy,

@@ -65,7 +65,23 @@ Endpoints de auth: `POST /api/auth/register`, `login`, `refresh`, `logout`
 
 Endpoints de academy: `POST /api/onboarding`, `GET /api/academies/me`, `PUT /api/academies/me`
 
+Endpoints Stripe SaaS: `POST /api/stripe/checkout-session`, `POST /api/stripe/portal-session`, webhook `POST /api/webhooks/stripe`
+
 Detalhes do Docker: `infra/docker/README.md`
+
+### Stripe local (issue #32)
+
+1. Coloque a secret key no `.env` (`Stripe__SecretKey=sk_test_...`) ou em `appsettings.Development.json`.
+2. Aplique a migration: `dotnet ef database update --project src/Tatami.Infrastructure --startup-project src/Tatami.Api`
+3. Encaminhe webhooks com a Stripe CLI:
+   ```bash
+   stripe listen --forward-to localhost:5006/api/webhooks/stripe
+   ```
+4. Copie o `whsec_...` para `Stripe__WebhookSecret`.
+
+Fluxo admin (dev atual): `/register` → `/onboarding` (academia) → `/dashboard`.
+
+Stripe SaaS (#32) está implementado, mas `enforceSubscription` em `environment.ts` está **`false`** para não travar o desenvolvimento. Quando for ligar billing de verdade: configure as chaves Stripe, rode o `stripe listen`, e mude para `enforceSubscription: true` (passo 2 + lockout passam a valer).
 
 ### Frontend
 
@@ -77,9 +93,9 @@ npm start
 
 App em `http://localhost:4200`
 
-Fluxo admin: `/register` ou `/login` → `/onboarding` (se ainda não tem academia) → `/dashboard`.
+Fluxo admin: `/register` ou `/login` → `/onboarding` (academia) → `/dashboard` (Stripe bypass no dev).
 
-Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (alunos, financeiro, Stripe) entram nas issues seguintes.
+Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (alunos, financeiro) entram nas issues seguintes.
 
 ### Solution completa (Rider)
 
