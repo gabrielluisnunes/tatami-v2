@@ -13,6 +13,13 @@ public record LoginRequest(
 public record RefreshTokenRequest(
     string RefreshToken);
 
+public record UpdateProfileRequest(
+    string FullName);
+
+public record ChangePasswordRequest(
+    string CurrentPassword,
+    string NewPassword);
+
 public record AuthUserResponse(
     Guid Id,
     string Email,
