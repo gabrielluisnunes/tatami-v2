@@ -1,33 +1,67 @@
-<section class="onboarding-card">
-  <h1>Configurar academia</h1>
-  <p>Olá, <strong>{{ ownerName }}</strong>. Complete os dados da sua academia.</p>
+<section class="onboarding-card" [class.onboarding-card--wide]="step === 2">
+  @if (resuming) {
+    <p>Carregando...</p>
+  } @else if (step === 1) {
+    <h1>Configurar academia</h1>
+    <p>Olá, <strong>{{ ownerName }}</strong>. Complete os dados da sua academia.</p>
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <label>
-      Nome da academia
-      <input type="text" formControlName="academyName" />
-    </label>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        Nome da academia
+        <input type="text" formControlName="academyName" />
+      </label>
 
-    <label>
-      Esporte principal
-      <select formControlName="sport">
-        @for (sport of sports; track sport.value) {
-          <option [value]="sport.value">{{ sport.label }}</option>
-        }
-      </select>
-    </label>
+      <label>
+        Esporte principal
+        <select formControlName="sport">
+          @for (sport of sports; track sport.value) {
+            <option [value]="sport.value">{{ sport.label }}</option>
+          }
+        </select>
+      </label>
 
-    <label>
-      Preço mensal (R$)
-      <input type="number" formControlName="monthlyPrice" min="0" step="0.01" />
-    </label>
+      <label>
+        Preço mensal (R$)
+        <input type="number" formControlName="monthlyPrice" min="0" step="0.01" />
+      </label>
+
+      @if (errorMessage) {
+        <p class="error">{{ errorMessage }}</p>
+      }
+
+      <button type="submit" [disabled]="form.invalid || loading">
+        {{ loading ? 'Criando...' : 'Criar academia' }}
+      </button>
+    </form>
+  } @else {
+    <h1>Escolha seu plano</h1>
+    <p>Todos os planos iniciam com 5 dias grátis. Cancele quando quiser.</p>
+
+    <div class="plans">
+      @for (plan of plans; track plan.key) {
+        <article class="plan-card" [class.plan-card--popular]="plan.popular">
+          @if (plan.popular) {
+            <span class="plan-badge">Mais popular</span>
+          }
+          <h2>{{ plan.name }}</h2>
+          <p class="plan-price">
+            R$ {{ plan.price }}<span>/mês</span>
+          </p>
+          <p class="plan-desc">{{ plan.description }}</p>
+          <ul>
+            @for (feature of plan.features; track feature) {
+              <li>{{ feature }}</li>
+            }
+          </ul>
+          <button type="button" [disabled]="loading" (click)="selectPlan(plan)">
+            {{ loading ? 'Redirecionando...' : 'Iniciar teste gratuito' }}
+          </button>
+        </article>
+      }
+    </div>
 
     @if (errorMessage) {
       <p class="error">{{ errorMessage }}</p>
     }
-
-    <button type="submit" [disabled]="form.invalid || loading">
-      {{ loading ? 'Criando...' : 'Criar academia' }}
-    </button>
-  </form>
+  }
 </section>
