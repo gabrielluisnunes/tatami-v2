@@ -32,6 +32,17 @@ public class AcademyConfiguration : IEntityTypeConfiguration<Academy>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(academy => academy.StripeCustomerId)
+            .HasMaxLength(100);
+
+        builder.Property(academy => academy.StripeSubscriptionId)
+            .HasMaxLength(100);
+
+        builder.Property(academy => academy.Plan)
+            .HasMaxLength(50);
+
+        builder.Property(academy => academy.TrialEndsAt);
+
         builder.Property(academy => academy.CreatedAt)
             .IsRequired();
 
@@ -40,5 +51,7 @@ public class AcademyConfiguration : IEntityTypeConfiguration<Academy>
 
         builder.HasIndex(academy => academy.OwnerId)
             .IsUnique();
+
+        builder.HasIndex(academy => academy.StripeSubscriptionId);
     }
 }

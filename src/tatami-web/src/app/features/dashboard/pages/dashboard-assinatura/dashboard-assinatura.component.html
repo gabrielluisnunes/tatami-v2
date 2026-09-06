@@ -1,0 +1,70 @@
+<section class="assinatura">
+  <header>
+    <h1>Assinatura</h1>
+    <p>Gerencie o plano SaaS da sua academia.</p>
+  </header>
+
+  @if (loading) {
+    <p>Carregando...</p>
+  } @else if (academy) {
+    @if (isRestricted) {
+      <div class="banner banner--danger">
+        Acesso restrito: regularize o pagamento para liberar o painel.
+      </div>
+    } @else if (isTrial && academy.plan) {
+      <div class="banner banner--trial">
+        Período de teste ativo
+        @if (academy.trialEndsAt) {
+          até {{ academy.trialEndsAt | date: 'dd/MM/yyyy' }}.
+        }
+      </div>
+    }
+
+    @if (academy.plan) {
+      <div class="status-card">
+        <div>
+          <h2>{{ planLabel }}</h2>
+          <p>Status: <strong>{{ statusLabel }}</strong></p>
+        </div>
+        <button type="button" [disabled]="actionLoading || !hasStripeAccount" (click)="openPortal()">
+          {{ actionLoading ? 'Abrindo...' : 'Gerenciar faturamento' }}
+        </button>
+      </div>
+    } @else {
+      <div class="status-card">
+        <div>
+          <h2>Ative sua assinatura</h2>
+          <p>Escolha um plano para iniciar o teste gratuito de 5 dias.</p>
+        </div>
+        <button type="button" (click)="showPlans = true">Ver planos disponíveis</button>
+      </div>
+    }
+
+    @if (showPlans || !academy.plan) {
+      <div class="plans">
+        @for (plan of plans; track plan.key) {
+          <article class="plan-card" [class.plan-card--popular]="plan.popular">
+            @if (plan.popular) {
+              <span class="plan-badge">Mais popular</span>
+            }
+            <h3>{{ plan.name }}</h3>
+            <p class="plan-price">R$ {{ plan.price }}<span>/mês</span></p>
+            <p class="plan-desc">{{ plan.description }}</p>
+            <ul>
+              @for (feature of plan.features; track feature) {
+                <li>{{ feature }}</li>
+              }
+            </ul>
+            <button type="button" [disabled]="actionLoading" (click)="selectPlan(plan)">
+              {{ actionLoading ? 'Redirecionando...' : 'Iniciar teste gratuito' }}
+            </button>
+          </article>
+        }
+      </div>
+    }
+  }
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+</section>

@@ -14,4 +14,12 @@ public class Academy : BaseEntity
     public decimal MonthlyPrice { get; set; }
 
     public string SubscriptionStatus { get; set; } = Constants.SubscriptionStatus.Trial;
+
+    public string? StripeCustomerId { get; set; }
+
+    public string? StripeSubscriptionId { get; set; }
+
+    public string? Plan { get; set; }
+
+    public DateTime? TrialEndsAt { get; set; }
 }

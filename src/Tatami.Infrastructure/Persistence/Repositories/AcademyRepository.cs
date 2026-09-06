@@ -19,6 +19,13 @@ public class AcademyRepository : IAcademyRepository
     public Task<Academy?> GetByOwnerIdAsync(Guid ownerId, CancellationToken cancellationToken = default) =>
         _dbContext.Academies.FirstOrDefaultAsync(academy => academy.OwnerId == ownerId, cancellationToken);
 
+    public Task<Academy?> GetByStripeSubscriptionIdAsync(
+        string stripeSubscriptionId,
+        CancellationToken cancellationToken = default) =>
+        _dbContext.Academies.FirstOrDefaultAsync(
+            academy => academy.StripeSubscriptionId == stripeSubscriptionId,
+            cancellationToken);
+
     public async Task<Academy> CreateAsync(Academy academy, CancellationToken cancellationToken = default)
     {
         _dbContext.Academies.Add(academy);

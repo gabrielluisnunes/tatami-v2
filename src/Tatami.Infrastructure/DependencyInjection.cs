@@ -8,10 +8,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Tatami.Application.Auth;
+using Tatami.Application.Billing;
 using Tatami.Domain.Enums;
 using Tatami.Domain.Repositories;
 using Tatami.Infrastructure.Auth;
 using Tatami.Infrastructure.Identity;
+using Tatami.Infrastructure.Integrations.Stripe;
 using Tatami.Infrastructure.Persistence;
 using Tatami.Infrastructure.Persistence.Repositories;
 
@@ -48,6 +50,7 @@ public static class DependencyInjection
             .AddDefaultTokenProviders();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
 
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
             ?? throw new InvalidOperationException("Jwt configuration is missing.");
@@ -89,6 +92,7 @@ public static class DependencyInjection
         services.AddScoped<IAcademyRepository, AcademyRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IOnboardingRepository, OnboardingRepository>();
+        services.AddScoped<IStripeGateway, StripeGateway>();
 
         return services;
     }
