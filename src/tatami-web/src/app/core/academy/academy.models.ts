@@ -30,6 +30,12 @@ export interface StripeSessionResponse {
   url: string;
 }
 
+export interface UpdateAcademyRequest {
+  name: string;
+  sport: string;
+  monthlyPrice: number;
+}
+
 export const SPORT_OPTIONS = [
   { value: 'jiu-jitsu', label: 'Jiu-Jitsu' },
   { value: 'muay thai', label: 'Muay Thai' },

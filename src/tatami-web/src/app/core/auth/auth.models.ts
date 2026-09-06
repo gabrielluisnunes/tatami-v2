@@ -24,3 +24,12 @@ export interface RegisterRequest {
   fullName: string;
   role: string;
 }
+
+export interface UpdateProfileRequest {
+  fullName: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}

@@ -61,7 +61,7 @@ API em `http://localhost:5006` (profile `http`).
 
 Health check: `GET /health` (inclui status do PostgreSQL)
 
-Endpoints de auth: `POST /api/auth/register`, `login`, `refresh`, `logout`
+Endpoints de auth: `POST /api/auth/register`, `login`, `refresh`, `logout`, `PATCH /api/auth/profile`, `POST /api/auth/change-password`
 
 Endpoints de academy: `POST /api/onboarding`, `GET /api/academies/me`, `PUT /api/academies/me`
 
@@ -94,6 +94,8 @@ npm start
 App em `http://localhost:4200`
 
 Fluxo admin: `/register` ou `/login` → `/onboarding` (academia) → `/dashboard` (Stripe bypass no dev).
+
+Perfil: `/dashboard/perfil` (nome, senha, academia, link para `/dashboard/assinatura`).
 
 Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (alunos, financeiro) entram nas issues seguintes.
 

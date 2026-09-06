@@ -7,6 +7,7 @@ import {
   CreateOnboardingRequest,
   OnboardingResponse,
   StripeSessionResponse,
+  UpdateAcademyRequest,
 } from './academy.models';
 
 @Injectable({ providedIn: 'root' })
@@ -22,6 +23,10 @@ export class AcademyService {
 
   getMyAcademy() {
     return this.http.get<Academy>(`${environment.apiUrl}/api/academies/me`);
+  }
+
+  updateMyAcademy(request: UpdateAcademyRequest) {
+    return this.http.put<Academy>(`${environment.apiUrl}/api/academies/me`, request);
   }
 
   createCheckoutSession(request: CheckoutSessionRequest) {

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { DashboardLayoutComponent } from './layout/dashboard-layout.component';
 import { DashboardHomeComponent } from './pages/dashboard-home/dashboard-home.component';
 import { DashboardAssinaturaComponent } from './pages/dashboard-assinatura/dashboard-assinatura.component';
+import { DashboardPerfilComponent } from './pages/dashboard-perfil/dashboard-perfil.component';
 import { DashboardStubComponent } from './pages/dashboard-stub.component';
 
 export const dashboardRoutes: Routes = [
@@ -84,12 +85,7 @@ export const dashboardRoutes: Routes = [
       },
       {
         path: 'perfil',
-        component: DashboardStubComponent,
-        data: {
-          title: 'Perfil',
-          issue: 33,
-          description: 'Dados do admin e configurações da academia.',
-        },
+        component: DashboardPerfilComponent,
       },
       {
         path: 'assinatura',

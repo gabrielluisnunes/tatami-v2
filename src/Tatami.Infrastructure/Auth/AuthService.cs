@@ -132,6 +132,72 @@ public class AuthService : IAuthService
         return await BuildAuthResponseAsync(user, cancellationToken);
     }
 
+    public async Task<AuthResponse> UpdateProfileAsync(
+        Guid userId,
+        UpdateProfileRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var fullName = request.FullName?.Trim() ?? string.Empty;
+        if (fullName.Length < 2)
+        {
+            throw new AuthException("Nome deve ter pelo menos 2 caracteres.");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            throw new AuthException("Usuário não encontrado.");
+        }
+
+        user.FullName = fullName;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            var message = string.Join(" ", result.Errors.Select(error => error.Description));
+            throw new AuthException(message);
+        }
+
+        return await BuildAuthResponseAsync(user, cancellationToken);
+    }
+
+    public async Task ChangePasswordAsync(
+        Guid userId,
+        ChangePasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(request.CurrentPassword))
+        {
+            throw new AuthException("Informe a senha atual.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.NewPassword) || request.NewPassword.Length < 8)
+        {
+            throw new AuthException("A nova senha deve ter pelo menos 8 caracteres.");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            throw new AuthException("Usuário não encontrado.");
+        }
+
+        var result = await _userManager.ChangePasswordAsync(
+            user,
+            request.CurrentPassword,
+            request.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            var message = string.Join(" ", result.Errors.Select(error => error.Description));
+            throw new AuthException(message);
+        }
+
+        user.UpdatedAt = DateTime.UtcNow;
+        await _userManager.UpdateAsync(user);
+    }
+
     private async Task<AuthResponse> BuildAuthResponseAsync(
         ApplicationUser user,
         CancellationToken cancellationToken)

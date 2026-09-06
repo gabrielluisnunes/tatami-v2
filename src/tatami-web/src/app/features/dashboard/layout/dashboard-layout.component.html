@@ -2,7 +2,7 @@
   <aside class="sidebar">
     <app-dashboard-sidebar
       [academyName]="academyName()"
-      [adminName]="adminName"
+      [adminName]="adminName()"
       [currentPath]="currentPath()"
       (logout)="logout()"
     />
@@ -49,7 +49,7 @@
       </div>
       <app-dashboard-sidebar
         [academyName]="academyName()"
-        [adminName]="adminName"
+        [adminName]="adminName()"
         [currentPath]="currentPath()"
         (navigated)="closeDrawer()"
         (logout)="logout()"
