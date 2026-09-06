@@ -1,0 +1,107 @@
+<section class="perfil">
+  <header>
+    <h1>Perfil</h1>
+    <p>Dados da conta e configurações da academia.</p>
+  </header>
+
+  @if (loading) {
+    <p>Carregando...</p>
+  } @else if (pageError) {
+    <p class="error">{{ pageError }}</p>
+  } @else {
+    <article class="card">
+      <h2>Meus dados</h2>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <label>
+          Nome completo
+          <input type="text" formControlName="fullName" />
+        </label>
+        <label>
+          E-mail
+          <input type="email" formControlName="email" />
+        </label>
+        @if (profileError) {
+          <p class="error">{{ profileError }}</p>
+        }
+        @if (profileMessage) {
+          <p class="success">{{ profileMessage }}</p>
+        }
+        <button type="submit" [disabled]="profileForm.invalid || profileLoading">
+          {{ profileLoading ? 'Salvando...' : 'Salvar dados' }}
+        </button>
+      </form>
+    </article>
+
+    <article class="card">
+      <h2>Segurança</h2>
+      <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+        <label>
+          Senha atual
+          <input type="password" formControlName="currentPassword" autocomplete="current-password" />
+        </label>
+        <label>
+          Nova senha
+          <input type="password" formControlName="newPassword" autocomplete="new-password" />
+        </label>
+        <label>
+          Confirmar nova senha
+          <input type="password" formControlName="confirmPassword" autocomplete="new-password" />
+        </label>
+        @if (passwordError) {
+          <p class="error">{{ passwordError }}</p>
+        }
+        @if (passwordMessage) {
+          <p class="success">{{ passwordMessage }}</p>
+        }
+        <button type="submit" [disabled]="passwordForm.invalid || passwordLoading">
+          {{ passwordLoading ? 'Alterando...' : 'Alterar senha' }}
+        </button>
+      </form>
+    </article>
+
+    <article class="card">
+      <h2>Academia</h2>
+      <form [formGroup]="academyForm" (ngSubmit)="saveAcademy()">
+        <label>
+          Nome da academia
+          <input type="text" formControlName="name" />
+        </label>
+        <label>
+          Esporte principal
+          <select formControlName="sport">
+            @for (sport of sports; track sport.value) {
+              <option [value]="sport.value">{{ sport.label }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Preço mensal (R$)
+          <input type="number" formControlName="monthlyPrice" min="0" step="0.01" />
+        </label>
+        @if (academyError) {
+          <p class="error">{{ academyError }}</p>
+        }
+        @if (academyMessage) {
+          <p class="success">{{ academyMessage }}</p>
+        }
+        <button type="submit" [disabled]="academyForm.invalid || academyLoading">
+          {{ academyLoading ? 'Salvando...' : 'Salvar academia' }}
+        </button>
+      </form>
+    </article>
+
+    <article class="card card--row">
+      <div>
+        <h2>Assinatura</h2>
+        <p>
+          <strong>{{ planLabel }}</strong>
+          · Status: {{ statusLabel }}
+        </p>
+        @if (!enforceSubscription && !academy?.plan) {
+          <p class="hint">Stripe está desligado no ambiente de desenvolvimento.</p>
+        }
+      </div>
+      <a routerLink="/dashboard/assinatura" class="link-button">Gerenciar assinatura</a>
+    </article>
+  }
+</section>

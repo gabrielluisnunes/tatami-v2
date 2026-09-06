@@ -18,6 +18,8 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Stripe SaaS: campos `Plan`, `StripeCustomerId`, `StripeSubscriptionId`, `TrialEndsAt` na academy
 - Endpoints: `POST /api/stripe/checkout-session`, `POST /api/stripe/portal-session`, `POST /api/webhooks/stripe`
 - Onboarding passo 2 (Starter/Pro) + página `/dashboard/assinatura` (código pronto; `enforceSubscription` desligado no dev)
+- Perfil admin `/dashboard/perfil`: dados do admin, senha, academia e link para assinatura
+- Auth: `PATCH /api/auth/profile`, `POST /api/auth/change-password`
 
 ## [2.0.0-auth] - 2026-08-31
 
