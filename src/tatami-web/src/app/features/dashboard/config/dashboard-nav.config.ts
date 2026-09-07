@@ -50,6 +50,7 @@ export const pageTitles: Record<string, string> = {
   '/dashboard/financeiro': 'Financeiro',
   '/dashboard/contratos': 'Contratos',
   '/dashboard/checkins': 'Check-ins',
+  '/dashboard/alunos/novo': 'Novo aluno',
   '/dashboard/alunos': 'Alunos',
   '/dashboard/turmas': 'Turmas',
   '/dashboard/perfil': 'Perfil',
@@ -58,6 +59,10 @@ export const pageTitles: Record<string, string> = {
 };
 
 export function getPageTitle(pathname: string): string {
+  if (pathname.includes('/alunos/') && pathname.endsWith('/editar')) {
+    return 'Editar aluno';
+  }
+
   for (const [key, title] of Object.entries(pageTitles)) {
     if (key === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(key)) {
       return title;

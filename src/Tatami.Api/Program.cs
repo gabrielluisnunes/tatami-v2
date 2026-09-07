@@ -7,6 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddHttpClient("ViaCep", client =>
+{
+    client.BaseAddress = new Uri("https://viacep.com.br/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

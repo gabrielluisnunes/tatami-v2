@@ -19,10 +19,10 @@ public static class SportTypeExtensions
         _ => throw new ArgumentOutOfRangeException(nameof(sport)),
     };
 
-    public static SportType FromSlug(string slug) => slug.ToLowerInvariant() switch
+    public static SportType FromSlug(string slug) => slug.Trim().ToLowerInvariant() switch
     {
         "jiu-jitsu" => SportType.JiuJitsu,
-        "muay thai" => SportType.MuayThai,
+        "muay thai" or "muay-thai" => SportType.MuayThai,
         "boxe" => SportType.Boxe,
         "misto" => SportType.Misto,
         _ => throw new ArgumentException($"Esporte inválido: {slug}"),
@@ -30,4 +30,10 @@ public static class SportTypeExtensions
 
     public static readonly IReadOnlyList<string> AllSlugs =
         ["jiu-jitsu", "muay thai", "boxe", "misto"];
+
+    public static readonly IReadOnlyList<string> StudentSportSlugs =
+        ["jiu-jitsu", "muay thai", "boxe"];
+
+    public static bool IsStudentSport(this SportType sport) =>
+        sport is SportType.JiuJitsu or SportType.MuayThai or SportType.Boxe;
 }

@@ -20,6 +20,10 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - Onboarding passo 2 (Starter/Pro) + página `/dashboard/assinatura` (código pronto; `enforceSubscription` desligado no dev)
 - Perfil admin `/dashboard/perfil`: dados do admin, senha, academia e link para assinatura
 - Auth: `PATCH /api/auth/profile`, `POST /api/auth/change-password`
+- Domínio Students: entity expandida + `student_sports`, enroll transacional, soft-deactivate
+- APIs: `GET/POST/PUT /api/students`, enroll, activate/deactivate
+- UI: `/dashboard/alunos` (lista, novo wizard, editar)
+- ViaCEP: `GET /api/viacep?cep=` + autofill no cadastro/edição de aluno
 
 ## [2.0.0-auth] - 2026-08-31
 

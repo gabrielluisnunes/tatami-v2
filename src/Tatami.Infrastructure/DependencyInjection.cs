@@ -9,10 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Tatami.Application.Auth;
 using Tatami.Application.Billing;
+using Tatami.Application.Students;
 using Tatami.Domain.Enums;
 using Tatami.Domain.Repositories;
 using Tatami.Infrastructure.Auth;
 using Tatami.Infrastructure.Identity;
+using Tatami.Infrastructure.Integrations.Email;
 using Tatami.Infrastructure.Integrations.Stripe;
 using Tatami.Infrastructure.Persistence;
 using Tatami.Infrastructure.Persistence.Repositories;
@@ -92,6 +94,9 @@ public static class DependencyInjection
         services.AddScoped<IAcademyRepository, AcademyRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IOnboardingRepository, OnboardingRepository>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<IStudentIdentityService, StudentIdentityService>();
+        services.AddScoped<IWelcomeEmailSender, StubWelcomeEmailSender>();
         services.AddScoped<IStripeGateway, StripeGateway>();
 
         return services;
