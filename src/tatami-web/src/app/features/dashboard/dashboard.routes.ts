@@ -3,6 +3,9 @@ import { DashboardLayoutComponent } from './layout/dashboard-layout.component';
 import { DashboardHomeComponent } from './pages/dashboard-home/dashboard-home.component';
 import { DashboardAssinaturaComponent } from './pages/dashboard-assinatura/dashboard-assinatura.component';
 import { DashboardPerfilComponent } from './pages/dashboard-perfil/dashboard-perfil.component';
+import { StudentEditComponent } from './pages/student-edit/student-edit.component';
+import { StudentEnrollComponent } from './pages/student-enroll/student-enroll.component';
+import { StudentsListComponent } from './pages/students-list/students-list.component';
 import { DashboardStubComponent } from './pages/dashboard-stub.component';
 
 export const dashboardRoutes: Routes = [
@@ -11,15 +14,9 @@ export const dashboardRoutes: Routes = [
     component: DashboardLayoutComponent,
     children: [
       { path: '', component: DashboardHomeComponent },
-      {
-        path: 'alunos',
-        component: DashboardStubComponent,
-        data: {
-          title: 'Alunos',
-          issue: 5,
-          description: 'Cadastro, listagem e edição de alunos da academia.',
-        },
-      },
+      { path: 'alunos', component: StudentsListComponent },
+      { path: 'alunos/novo', component: StudentEnrollComponent },
+      { path: 'alunos/:id/editar', component: StudentEditComponent },
       {
         path: 'professores',
         component: DashboardStubComponent,

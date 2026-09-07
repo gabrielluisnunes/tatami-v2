@@ -65,6 +65,8 @@ Endpoints de auth: `POST /api/auth/register`, `login`, `refresh`, `logout`, `PAT
 
 Endpoints de academy: `POST /api/onboarding`, `GET /api/academies/me`, `PUT /api/academies/me`
 
+Endpoints de alunos: `GET /api/students`, `GET /api/students/{id}`, `POST /api/students/enroll`, `PUT /api/students/{id}`, `POST /api/students/{id}/deactivate`, `POST /api/students/{id}/activate`
+
 Endpoints Stripe SaaS: `POST /api/stripe/checkout-session`, `POST /api/stripe/portal-session`, webhook `POST /api/webhooks/stripe`
 
 Detalhes do Docker: `infra/docker/README.md`
@@ -97,7 +99,9 @@ Fluxo admin: `/register` ou `/login` → `/onboarding` (academia) → `/dashboar
 
 Perfil: `/dashboard/perfil` (nome, senha, academia, link para `/dashboard/assinatura`).
 
-Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (alunos, financeiro) entram nas issues seguintes.
+Alunos: `/dashboard/alunos` (lista/busca), `/dashboard/alunos/novo` (wizard), `/dashboard/alunos/:id/editar`. Foto/contratos/e-mail de boas-vindas ainda são stubs.
+
+Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (financeiro, turmas) entram nas issues seguintes.
 
 ### Solution completa (Rider)
 

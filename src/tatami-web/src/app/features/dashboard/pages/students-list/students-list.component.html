@@ -1,0 +1,104 @@
+<section class="students">
+  <header class="toolbar">
+    <div>
+      <h1>Alunos</h1>
+      <p>Cadastro e gestão dos alunos da academia.</p>
+    </div>
+    <a routerLink="/dashboard/alunos/novo" class="primary-link">Novo aluno</a>
+  </header>
+
+  @if (successMessage) {
+    <p class="success">{{ successMessage }}</p>
+  }
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  <form class="filters" (submit)="onSearchSubmit($event)">
+    <input
+      type="search"
+      [(ngModel)]="search"
+      name="search"
+      placeholder="Buscar por nome ou e-mail"
+    />
+    <button type="submit">Buscar</button>
+    <button type="button" class="ghost" (click)="toggleInactive()">
+      {{ showInactive ? 'Só ativos' : 'Incluir inativos' }}
+    </button>
+  </form>
+
+  @if (loading) {
+    <p>Carregando...</p>
+  } @else if (students.length === 0) {
+    <p class="empty">Nenhum aluno encontrado.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Contato</th>
+            <th>Esportes</th>
+            <th>Desde</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (student of students; track student.id) {
+            <tr [class.inactive]="!student.isActive">
+              <td>
+                <strong>{{ student.fullName }}</strong>
+                <div class="muted">{{ student.email }}</div>
+              </td>
+              <td>
+                {{ student.phone || '—' }}
+                @if (student.city) {
+                  <div class="muted">{{ student.city }}{{ student.state ? '/' + student.state : '' }}</div>
+                }
+              </td>
+              <td>
+                <div class="badges">
+                  @for (sport of student.sports; track sport.sport) {
+                    <span class="badge">
+                      {{ sportLabel(sport.sport) }}
+                      @if (sport.belt) {
+                        · {{ sport.belt }}
+                        @if (sport.degree) {
+                          {{ sport.degree }}º
+                        }
+                      }
+                    </span>
+                  }
+                </div>
+              </td>
+              <td>{{ student.createdAt | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ student.isActive ? 'Ativo' : 'Inativo' }}</td>
+              <td class="actions">
+                <a [routerLink]="['/dashboard/alunos', student.id, 'editar']">Editar</a>
+                @if (student.isActive) {
+                  <button
+                    type="button"
+                    class="danger"
+                    [disabled]="actionLoadingId === student.id"
+                    (click)="deactivate(student)"
+                  >
+                    Desativar
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    [disabled]="actionLoadingId === student.id"
+                    (click)="activate(student)"
+                  >
+                    Reativar
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

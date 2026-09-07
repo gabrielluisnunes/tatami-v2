@@ -1,0 +1,116 @@
+<section class="enroll">
+  <header>
+    <h1>Novo aluno</h1>
+    <p>Passo {{ step }} de 4</p>
+  </header>
+
+  @if (temporaryPassword) {
+    <article class="card success-card">
+      <h2>Aluno criado</h2>
+      <p>Guarde a senha temporária. O e-mail de boas-vindas ainda é stub.</p>
+      <p><strong>E-mail:</strong> {{ createdEmail }}</p>
+      <p><strong>Senha temporária:</strong> <code>{{ temporaryPassword }}</code></p>
+      <button type="button" (click)="finishAfterPassword()">Ir para a lista</button>
+    </article>
+  } @else if (step === 1) {
+    <article class="card">
+      <h2>Dados pessoais</h2>
+      <form [formGroup]="dataForm" (ngSubmit)="goToStep2()">
+        <label>Nome completo<input type="text" formControlName="fullName" /></label>
+        <label>E-mail<input type="email" formControlName="email" /></label>
+        <label>Telefone<input type="text" formControlName="phone" /></label>
+        <label>Telefone de emergência<input type="text" formControlName="emergencyPhone" /></label>
+        <label>Data de nascimento<input type="date" formControlName="birthDate" /></label>
+        <label>
+          CEP
+          <input
+            type="text"
+            formControlName="cep"
+            maxlength="9"
+            placeholder="00000-000"
+            (input)="onCepInput($event)"
+          />
+        </label>
+        @if (cepLoading) {
+          <p class="hint">Buscando endereço...</p>
+        }
+        @if (cepError) {
+          <p class="error">{{ cepError }}</p>
+        }
+        <label>Endereço<input type="text" formControlName="address" /></label>
+        <label>Bairro<input type="text" formControlName="neighborhood" /></label>
+        <label>Cidade<input type="text" formControlName="city" /></label>
+        <label>UF<input type="text" formControlName="state" maxlength="2" /></label>
+        <div class="actions">
+          <a routerLink="/dashboard/alunos" class="ghost-link">Cancelar</a>
+          <button type="submit">Continuar</button>
+        </div>
+      </form>
+    </article>
+  } @else if (step === 2) {
+    <article class="card">
+      <h2>Esportes</h2>
+      <form [formGroup]="sportsForm" (ngSubmit)="goToStep3()">
+        <div formArrayName="sports" class="sports">
+          @for (group of sports.controls; track $index; let i = $index) {
+            <div class="sport-row" [formGroupName]="i">
+              <label>
+                Esporte
+                <select formControlName="sport">
+                  @for (option of sportsOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </label>
+              @if (!isBoxe(i)) {
+                <label>
+                  Faixa
+                  <select formControlName="belt">
+                    @for (belt of beltOptions; track belt) {
+                      <option [value]="belt">{{ belt }}</option>
+                    }
+                  </select>
+                </label>
+                <label>
+                  Grau
+                  <input type="number" formControlName="degree" min="0" max="4" />
+                </label>
+              }
+              <button type="button" class="ghost" (click)="removeSport(i)" [disabled]="sports.length === 1">
+                Remover
+              </button>
+            </div>
+          }
+        </div>
+        <button type="button" class="ghost" (click)="addSport()">Adicionar esporte</button>
+        <div class="actions">
+          <button type="button" class="ghost" (click)="back()">Voltar</button>
+          <button type="submit">Continuar</button>
+        </div>
+      </form>
+    </article>
+  } @else if (step === 3) {
+    <article class="card">
+      <h2>Foto</h2>
+      <p class="hint">Upload de foto entra com MinIO (issue #12). Você pode continuar sem foto.</p>
+      <div class="actions">
+        <button type="button" class="ghost" (click)="back()">Voltar</button>
+        <button type="button" (click)="goToStep4()">Continuar</button>
+      </div>
+    </article>
+  } @else {
+    <article class="card">
+      <h2>Contratos</h2>
+      <p class="hint">Contratos digitais entram na issue #25. Finalize o cadastro agora.</p>
+      @if (errorMessage) {
+        <p class="error">{{ errorMessage }}</p>
+      }
+      <div class="actions">
+        <button type="button" class="ghost" (click)="back()" [disabled]="loading">Voltar</button>
+        <button type="button" (click)="submit()" [disabled]="loading">
+          {{ loading ? 'Cadastrando...' : 'Finalizar cadastro' }}
+        </button>
+      </div>
+    </article>
+  }
+</section>
