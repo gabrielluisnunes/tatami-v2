@@ -19,6 +19,8 @@ public static class SaaSPlans
         Pro,
     ];
 
+    public const int StarterMaxActiveStudents = 50;
+
     public static string DisplayName(string planKey) => planKey switch
     {
         Starter => "Starter",

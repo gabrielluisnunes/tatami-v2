@@ -15,6 +15,7 @@ public class TatamiDbContext : IdentityDbContext<ApplicationUser, IdentityRole<G
 
     public DbSet<Academy> Academies => Set<Academy>();
     public DbSet<Student> Students => Set<Student>();
+    public DbSet<StudentSport> StudentSports => Set<StudentSport>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
