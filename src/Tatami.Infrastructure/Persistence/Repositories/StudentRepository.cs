@@ -66,6 +66,13 @@ public class StudentRepository : IStudentRepository
                 cancellationToken);
     }
 
+    public Task<Student?> GetByUserIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default) =>
+        _dbContext.Students
+            .Include(student => student.Sports)
+            .FirstOrDefaultAsync(student => student.UserId == userId, cancellationToken);
+
     public Task<int> CountActiveByAcademyAsync(
         Guid academyId,
         CancellationToken cancellationToken = default) =>

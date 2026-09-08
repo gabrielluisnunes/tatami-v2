@@ -20,6 +20,10 @@ public interface IStudentRepository
         string email,
         CancellationToken cancellationToken = default);
 
+    Task<Student?> GetByUserIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
+
     Task<int> CountActiveByAcademyAsync(
         Guid academyId,
         CancellationToken cancellationToken = default);

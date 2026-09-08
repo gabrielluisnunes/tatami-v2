@@ -51,6 +51,9 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.Property(student => student.PhotoUrl)
             .HasMaxLength(500);
 
+        builder.Property(student => student.FaceDescriptor)
+            .HasColumnType("jsonb");
+
         builder.Property(student => student.IsActive)
             .IsRequired()
             .HasDefaultValue(true);

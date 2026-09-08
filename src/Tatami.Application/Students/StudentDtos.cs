@@ -50,6 +50,7 @@ public record StudentResponse(
     int? PaymentDueDay,
     string? PhotoUrl,
     bool IsActive,
+    bool IsProfileComplete,
     IReadOnlyList<StudentSportResponse> Sports,
     DateTime CreatedAt);
 
@@ -57,6 +58,21 @@ public record EnrollStudentResponse(
     StudentResponse Student,
     bool EmailSent,
     string? TemporaryPassword);
+
+public record StudentMeResponse(
+    Guid Id,
+    Guid AcademyId,
+    Guid UserId,
+    string FullName,
+    string Email,
+    int? PaymentDueDay,
+    string? PhotoUrl,
+    bool IsProfileComplete);
+
+public record CompleteStudentProfileRequest(
+    int PaymentDueDay,
+    string PhotoBase64,
+    IReadOnlyList<double> FaceDescriptor);
 
 public class StudentException : Exception
 {
