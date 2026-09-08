@@ -1,0 +1,35 @@
+<div class="camera">
+  @if (status() === 'models-loading') {
+    <p class="hint">Carregando reconhecimento facial...</p>
+  } @else if (status() === 'models-error') {
+    <p class="error">{{ errorMessage() }}</p>
+  } @else {
+    <div class="frame">
+      @if (capturedImage(); as img) {
+        <img [src]="img" alt="Foto capturada" />
+      } @else {
+        <video #video autoplay playsinline muted [class.mirror]="status() === 'streaming'"></video>
+      }
+      <canvas #canvas hidden></canvas>
+    </div>
+
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
+
+    <div class="actions">
+      @if (status() === 'idle' || status() === 'camera-denied' || status() === 'error') {
+        <button type="button" (click)="startCamera()">Abrir câmera</button>
+      }
+      @if (status() === 'streaming') {
+        <button type="button" (click)="capture()">Capturar</button>
+      }
+      @if (status() === 'detecting') {
+        <p class="hint">Detectando rosto...</p>
+      }
+      @if (status() === 'success' || status() === 'no-face') {
+        <button type="button" class="ghost" (click)="retake()">Tirar outra</button>
+      }
+    </div>
+  }
+</div>

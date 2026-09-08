@@ -1,0 +1,67 @@
+<section class="completar">
+  @if (loading()) {
+    <p>Carregando...</p>
+  } @else {
+    @switch (step()) {
+      @case ('payment-day') {
+        <article class="card">
+          <h1>Olá, {{ firstName() }}</h1>
+          <p>Escolha o dia do mês em que sua mensalidade vence.</p>
+          <div class="days">
+            @for (day of days; track day) {
+              <button
+                type="button"
+                class="day"
+                [class.selected]="paymentDay() === day"
+                (click)="selectDay(day)"
+              >
+                {{ day }}
+              </button>
+            }
+          </div>
+          @if (errorMessage()) {
+            <p class="error">{{ errorMessage() }}</p>
+          }
+          <button type="button" class="primary" (click)="goToInstructions()">Continuar</button>
+        </article>
+      }
+      @case ('instructions') {
+        <article class="card">
+          <h1>Foto de perfil</h1>
+          <p>Siga as orientações para o reconhecimento facial funcionar bem.</p>
+          <ul>
+            @for (item of instructions; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+          <button type="button" class="primary" (click)="goToCamera()">Abrir câmera</button>
+        </article>
+      }
+      @case ('camera') {
+        <article class="card">
+          <h1>Captura</h1>
+          <app-live-camera-capture
+            (captured)="onCapture($event)"
+            (reset)="onResetCapture()"
+          />
+          @if (errorMessage()) {
+            <p class="error">{{ errorMessage() }}</p>
+          }
+          <button type="button" class="primary" (click)="save()">Salvar e concluir</button>
+        </article>
+      }
+      @case ('saving') {
+        <article class="card">
+          <h1>Salvando...</h1>
+          <p>Enviando foto e finalizando seu perfil.</p>
+        </article>
+      }
+      @case ('saved') {
+        <article class="card success">
+          <h1>Perfil completo</h1>
+          <p>Redirecionando para a área do aluno...</p>
+        </article>
+      }
+    }
+  }
+</section>

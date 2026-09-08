@@ -24,6 +24,9 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - APIs: `GET/POST/PUT /api/students`, enroll, activate/deactivate
 - UI: `/dashboard/alunos` (lista, novo wizard, editar)
 - ViaCEP: `GET /api/viacep?cep=` + autofill no cadastro/edição de aluno
+- MinIO: `IObjectStorage` + buckets `tatami-photos` / `tatami-contracts`, URLs assinadas (1h)
+- Aluno: `FaceDescriptor` (jsonb), `GET/POST /api/students/me`, onboarding `/aluno/completar-perfil` (câmera + face-api)
+- Admin lista alunos com thumb da foto e badge de perfil incompleto
 
 ## [2.0.0-auth] - 2026-08-31
 

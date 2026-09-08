@@ -36,6 +36,7 @@
       <table>
         <thead>
           <tr>
+            <th>Foto</th>
             <th>Nome</th>
             <th>Contato</th>
             <th>Esportes</th>
@@ -47,9 +48,19 @@
         <tbody>
           @for (student of students; track student.id) {
             <tr [class.inactive]="!student.isActive">
+              <td class="photo-cell">
+                @if (student.photoUrl) {
+                  <img [src]="student.photoUrl" [alt]="student.fullName" class="thumb" />
+                } @else {
+                  <span class="thumb placeholder">{{ initials(student.fullName) }}</span>
+                }
+              </td>
               <td>
                 <strong>{{ student.fullName }}</strong>
                 <div class="muted">{{ student.email }}</div>
+                @if (!student.isProfileComplete) {
+                  <span class="badge warn">Perfil incompleto</span>
+                }
               </td>
               <td>
                 {{ student.phone || '—' }}

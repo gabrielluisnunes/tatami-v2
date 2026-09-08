@@ -106,4 +106,13 @@ export class StudentsListComponent implements OnInit {
     if (sport === 'boxe') return 'Boxe';
     return sport;
   }
+
+  initials(fullName: string): string {
+    return fullName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0]?.toUpperCase() ?? '')
+      .join('');
+  }
 }
