@@ -23,6 +23,7 @@ export class StudentsListComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   actionLoadingId: string | null = null;
+  readonly failedPhotoIds = new Set<string>();
 
   ngOnInit(): void {
     if (this.route.snapshot.queryParamMap.get('created') === '1') {
@@ -45,6 +46,7 @@ export class StudentsListComponent implements OnInit {
       })
       .subscribe({
         next: students => {
+          this.failedPhotoIds.clear();
           this.students = students;
           this.loading = false;
         },
@@ -105,5 +107,18 @@ export class StudentsListComponent implements OnInit {
     if (sport === 'muay thai' || sport === 'muay-thai') return 'Muay Thai';
     if (sport === 'boxe') return 'Boxe';
     return sport;
+  }
+
+  onPhotoError(studentId: string): void {
+    this.failedPhotoIds.add(studentId);
+  }
+
+  initials(fullName: string): string {
+    return fullName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0]?.toUpperCase() ?? '')
+      .join('');
   }
 }

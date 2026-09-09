@@ -247,6 +247,9 @@ namespace Tatami.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
+                    b.Property<double[]>("FaceDescriptor")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(200)

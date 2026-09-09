@@ -30,9 +30,18 @@ public class Student : BaseEntity
 
     public int? PaymentDueDay { get; set; }
 
+    /// <summary>Storage object path (e.g. academyId/userId.jpeg), never a public URL.</summary>
     public string? PhotoUrl { get; set; }
+
+    /// <summary>Face-api descriptor: exactly 128 floats. Sensitive — never expose in list APIs.</summary>
+    public double[]? FaceDescriptor { get; set; }
 
     public bool IsActive { get; set; } = true;
 
     public ICollection<StudentSport> Sports { get; set; } = new List<StudentSport>();
+
+    public bool IsProfileComplete =>
+        PaymentDueDay is >= 1 and <= 31
+        && FaceDescriptor is { Length: 128 }
+        && !string.IsNullOrWhiteSpace(PhotoUrl);
 }

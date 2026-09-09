@@ -67,9 +67,29 @@ Endpoints de academy: `POST /api/onboarding`, `GET /api/academies/me`, `PUT /api
 
 Endpoints de alunos: `GET /api/students`, `GET /api/students/{id}`, `POST /api/students/enroll`, `PUT /api/students/{id}`, `POST /api/students/{id}/deactivate`, `POST /api/students/{id}/activate`
 
+Endpoints de perfil do aluno: `GET /api/students/me`, `POST /api/students/me/complete-profile`
+
 Endpoints Stripe SaaS: `POST /api/stripe/checkout-session`, `POST /api/stripe/portal-session`, webhook `POST /api/webhooks/stripe`
 
 Detalhes do Docker: `infra/docker/README.md`
+
+### MinIO + foto do aluno (issue #12)
+
+1. MinIO deve estar up (`docker compose ... up -d`) — a API cria os buckets `tatami-photos` / `tatami-contracts` no boot.
+2. Config em `appsettings.json` (`Minio:*`) ou `.env` (`Minio__Endpoint`, `Minio__PublicEndpoint`, `Minio__AccessKey`, …). `PublicEndpoint` é a URL que o browser usa nas thumbs (em local: `http://localhost:9000`).
+3. Fluxo (paridade v1):
+   - Admin cadastra o aluno **sem** foto.
+   - Aluno faz login → é forçado a `/aluno/completar-perfil`.
+   - Escolhe dia de vencimento → câmera + face-api → salva path em `students.PhotoUrl`, descriptor jsonb e `PaymentDueDay`.
+4. Console MinIO: `http://localhost:9001` (user/senha do `.env`).
+
+Checklist manual:
+- [ ] Enroll admin → senha temporária
+- [ ] Login aluno → redirect completar-perfil
+- [ ] Câmera + due day → home `/aluno`
+- [ ] Objeto no bucket `{academyId}/{userId}.jpeg`
+- [ ] Lista admin mostra thumb assinada + badge “Perfil incompleto” quando faltar
+- [ ] Segundo login não reabre o wizard
 
 ### Stripe local (issue #32)
 
@@ -99,7 +119,9 @@ Fluxo admin: `/register` ou `/login` → `/onboarding` (academia) → `/dashboar
 
 Perfil: `/dashboard/perfil` (nome, senha, academia, link para `/dashboard/assinatura`).
 
-Alunos: `/dashboard/alunos` (lista/busca), `/dashboard/alunos/novo` (wizard), `/dashboard/alunos/:id/editar`. Foto/contratos/e-mail de boas-vindas ainda são stubs.
+Alunos (admin): `/dashboard/alunos` (lista/busca), `/dashboard/alunos/novo` (wizard), `/dashboard/alunos/:id/editar`. Contratos e e-mail de boas-vindas ainda são stubs.
+
+Portal aluno: `/aluno` (home) e `/aluno/completar-perfil` (dia de vencimento + foto com câmera). Guard força o completar-perfil até o perfil estar completo.
 
 Rotas do painel (`/dashboard`, `/dashboard/alunos`, …) são a casca do admin. Domínios (financeiro, turmas) entram nas issues seguintes.
 

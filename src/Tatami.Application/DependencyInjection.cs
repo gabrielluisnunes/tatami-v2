@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<IAcademyService, AcademyService>();
         services.AddScoped<IStripeBillingService, StripeBillingService>();
         services.AddScoped<IStudentService, StudentService>();
+        services.AddScoped<IStudentProfileService, StudentProfileService>();
 
         return services;
     }

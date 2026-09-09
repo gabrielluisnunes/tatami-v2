@@ -37,6 +37,7 @@ public class JwtTokenService
         foreach (var role in roles)
         {
             claims.Add(new Claim("role", role));
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));

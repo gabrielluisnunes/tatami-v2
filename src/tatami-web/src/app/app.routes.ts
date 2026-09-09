@@ -5,9 +5,8 @@ import {
   onboardingCompleteGuard,
   onboardingRequiredGuard,
 } from './core/guards/onboarding.guard';
-import { adminGuard, alunoGuard, professorGuard } from './core/guards/role.guard';
+import { adminGuard, professorGuard } from './core/guards/role.guard';
 import { subscriptionRequiredGuard } from './core/guards/subscription-required.guard';
-import { AlunoHomeComponent } from './features/aluno/aluno-home.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { OnboardingComponent } from './features/onboarding/onboarding.component';
@@ -28,8 +27,8 @@ export const routes: Routes = [
   },
   {
     path: 'aluno',
-    component: AlunoHomeComponent,
-    canActivate: [authGuard, alunoGuard],
+    loadChildren: () =>
+      import('./features/aluno/aluno.routes').then(m => m.alunoRoutes),
   },
   {
     path: 'dashboard',

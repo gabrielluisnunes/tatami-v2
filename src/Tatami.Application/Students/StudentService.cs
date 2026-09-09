@@ -1,3 +1,4 @@
+using Tatami.Application.Storage;
 using Tatami.Domain.Constants;
 using Tatami.Domain.Entities;
 using Tatami.Domain.Enums;
@@ -7,24 +8,29 @@ namespace Tatami.Application.Students;
 
 public class StudentService : IStudentService
 {
+    private static readonly TimeSpan PhotoUrlTtl = TimeSpan.FromHours(1);
+
     private readonly IUserRepository _userRepository;
     private readonly IAcademyRepository _academyRepository;
     private readonly IStudentRepository _studentRepository;
     private readonly IStudentIdentityService _identityService;
     private readonly IWelcomeEmailSender _welcomeEmailSender;
+    private readonly IStudentPhotoStorage _photoStorage;
 
     public StudentService(
         IUserRepository userRepository,
         IAcademyRepository academyRepository,
         IStudentRepository studentRepository,
         IStudentIdentityService identityService,
-        IWelcomeEmailSender welcomeEmailSender)
+        IWelcomeEmailSender welcomeEmailSender,
+        IStudentPhotoStorage photoStorage)
     {
         _userRepository = userRepository;
         _academyRepository = academyRepository;
         _studentRepository = studentRepository;
         _identityService = identityService;
         _welcomeEmailSender = welcomeEmailSender;
+        _photoStorage = photoStorage;
     }
 
     public async Task<IReadOnlyList<StudentResponse>> ListAsync(
@@ -40,7 +46,13 @@ public class StudentService : IStudentService
             active,
             cancellationToken);
 
-        return students.Select(MapStudent).ToList();
+        var result = new List<StudentResponse>(students.Count);
+        foreach (var student in students)
+        {
+            result.Add(await MapStudentAsync(student, cancellationToken));
+        }
+
+        return result;
     }
 
     public async Task<StudentResponse> GetByIdAsync(
@@ -52,7 +64,7 @@ public class StudentService : IStudentService
         var student = await _studentRepository.GetByIdAsync(studentId, academyId, cancellationToken)
             ?? throw new StudentException("Aluno não encontrado.");
 
-        return MapStudent(student);
+        return await MapStudentAsync(student, cancellationToken);
     }
 
     public async Task<EnrollStudentResponse> EnrollAsync(
@@ -135,7 +147,7 @@ public class StudentService : IStudentService
                 cancellationToken);
 
             return new EnrollStudentResponse(
-                MapStudent(student),
+                await MapStudentAsync(student, cancellationToken),
                 emailSent,
                 emailSent ? null : temporaryPassword);
         }
@@ -178,7 +190,7 @@ public class StudentService : IStudentService
         student.UpdatedAt = DateTime.UtcNow;
 
         student = await _studentRepository.UpdateWithSportsAsync(student, sports, cancellationToken);
-        return MapStudent(student);
+        return await MapStudentAsync(student, cancellationToken);
     }
 
     public async Task<StudentResponse> DeactivateAsync(
@@ -193,7 +205,7 @@ public class StudentService : IStudentService
         student.IsActive = false;
         student.UpdatedAt = DateTime.UtcNow;
         await _studentRepository.UpdateAsync(student, cancellationToken);
-        return MapStudent(student);
+        return await MapStudentAsync(student, cancellationToken);
     }
 
     public async Task<StudentResponse> ActivateAsync(
@@ -230,7 +242,7 @@ public class StudentService : IStudentService
         student.IsActive = true;
         student.UpdatedAt = DateTime.UtcNow;
         await _studentRepository.UpdateAsync(student, cancellationToken);
-        return MapStudent(student);
+        return await MapStudentAsync(student, cancellationToken);
     }
 
     private async Task<Guid> RequireAdminAcademyIdAsync(
@@ -341,8 +353,12 @@ public class StudentService : IStudentService
         return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
     }
 
-    internal static StudentResponse MapStudent(Student student) =>
-        new(
+    private async Task<StudentResponse> MapStudentAsync(
+        Student student,
+        CancellationToken cancellationToken)
+    {
+        var photoUrl = await ResolvePhotoUrlAsync(student.PhotoUrl, cancellationToken);
+        return new StudentResponse(
             student.Id,
             student.AcademyId,
             student.UserId,
@@ -357,8 +373,9 @@ public class StudentService : IStudentService
             student.City,
             student.State,
             student.PaymentDueDay,
-            student.PhotoUrl,
+            photoUrl,
             student.IsActive,
+            student.IsProfileComplete,
             student.Sports
                 .OrderBy(sport => sport.Sport.ToSlug())
                 .Select(sport => new StudentSportResponse(
@@ -368,4 +385,30 @@ public class StudentService : IStudentService
                     sport.BeltUpdatedAt))
                 .ToList(),
             student.CreatedAt);
+    }
+
+    private async Task<string?> ResolvePhotoUrlAsync(
+        string? photoPath,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(photoPath))
+        {
+            return null;
+        }
+
+        if (photoPath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+            || photoPath.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+        {
+            return photoPath;
+        }
+
+        try
+        {
+            return await _photoStorage.GetSignedUrlAsync(photoPath, PhotoUrlTtl, cancellationToken);
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

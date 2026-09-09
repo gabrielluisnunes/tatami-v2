@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
+import { SESSION_EXPIRED_REASON } from '../../../core/auth/idle-session.service';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +15,12 @@ export class LoginComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  errorMessage = '';
+  errorMessage =
+    this.route.snapshot.queryParamMap.get('reason') === SESSION_EXPIRED_REASON
+      ? 'Sua sessão expirou. Entre novamente para continuar.'
+      : '';
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

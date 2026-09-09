@@ -1,20 +1,23 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using Tatami.Application.Auth;
 using Tatami.Application.Billing;
+using Tatami.Application.Storage;
 using Tatami.Application.Students;
 using Tatami.Domain.Enums;
 using Tatami.Domain.Repositories;
 using Tatami.Infrastructure.Auth;
 using Tatami.Infrastructure.Identity;
 using Tatami.Infrastructure.Integrations.Email;
+using Tatami.Infrastructure.Integrations.Storage;
 using Tatami.Infrastructure.Integrations.Stripe;
 using Tatami.Infrastructure.Persistence;
 using Tatami.Infrastructure.Persistence.Repositories;
@@ -35,8 +38,13 @@ public static class DependencyInjection
                 "Connection string 'DefaultConnection' is not configured.");
         }
 
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+        services.AddSingleton(dataSource);
+
         services.AddDbContext<TatamiDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(dataSource));
 
         services
             .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
@@ -53,6 +61,7 @@ public static class DependencyInjection
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
+        services.Configure<MinioOptions>(configuration.GetSection(MinioOptions.SectionName));
 
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
             ?? throw new InvalidOperationException("Jwt configuration is missing.");
@@ -99,7 +108,29 @@ public static class DependencyInjection
         services.AddScoped<IWelcomeEmailSender, StubWelcomeEmailSender>();
         services.AddScoped<IStripeGateway, StripeGateway>();
 
+        RegisterMinio(services, configuration);
+
         return services;
+    }
+
+    private static void RegisterMinio(IServiceCollection services, IConfiguration configuration)
+    {
+        var minio = configuration.GetSection(MinioOptions.SectionName).Get<MinioOptions>()
+            ?? new MinioOptions();
+
+        var dataClient = MinioS3Factory.CreateClient(minio, minio.Endpoint);
+        var publicEndpoint = MinioS3Factory.ResolvePublicEndpoint(minio);
+        var presignClient = MinioS3Factory.SameEndpoint(minio.Endpoint, publicEndpoint)
+            ? dataClient
+            : MinioS3Factory.CreateClient(minio, publicEndpoint);
+
+        services.AddSingleton<IAmazonS3>(dataClient);
+        services.AddSingleton(
+            new MinioPresignClient(presignClient, MinioS3Factory.ProtocolOf(publicEndpoint)));
+
+        services.AddScoped<IObjectStorage, MinioObjectStorage>();
+        services.AddScoped<IStudentPhotoStorage, StudentPhotoStorage>();
+        services.AddHostedService<MinioBucketBootstrapHostedService>();
     }
 
     public static async Task SeedRolesAsync(IServiceProvider services)

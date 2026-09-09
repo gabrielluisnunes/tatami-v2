@@ -21,8 +21,13 @@ export class AuthService {
   readonly currentUser = signal<AuthUser | null>(null);
 
   constructor(private readonly http: HttpClient) {
-    this.authenticated.set(!!localStorage.getItem(ACCESS_TOKEN_KEY));
-    this.currentUser.set(this.readStoredUser());
+    if (this.isAuthenticated()) {
+      this.authenticated.set(true);
+      this.currentUser.set(this.readStoredUser());
+      return;
+    }
+
+    this.clearSessionInternal();
   }
 
   login(request: LoginRequest) {
@@ -75,7 +80,21 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const token = this.getAccessToken();
-    return !!token && token.split('.').length === 3;
+    return !!token && token.split('.').length === 3 && !this.isAccessTokenExpired();
+  }
+
+  isAccessTokenExpired(): boolean {
+    const token = this.getAccessToken();
+    if (!token) {
+      return false;
+    }
+
+    const payload = this.decodeJwtPayload(token);
+    if (!payload?.exp) {
+      return true;
+    }
+
+    return Date.now() >= payload.exp * 1000;
   }
 
   needsOnboarding(): boolean {
@@ -134,6 +153,21 @@ export class AuthService {
     localStorage.removeItem(USER_KEY);
     this.currentUser.set(null);
     this.authenticated.set(false);
+  }
+
+  private decodeJwtPayload(token: string): { exp?: number } | null {
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return null;
+    }
+
+    try {
+      const normalized = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+      return JSON.parse(atob(padded)) as { exp?: number };
+    } catch {
+      return null;
+    }
   }
 
   private readStoredUser(): AuthUser | null {

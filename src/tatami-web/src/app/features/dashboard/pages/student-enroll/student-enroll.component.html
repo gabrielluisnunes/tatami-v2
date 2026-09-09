@@ -92,7 +92,11 @@
   } @else if (step === 3) {
     <article class="card">
       <h2>Foto</h2>
-      <p class="hint">Upload de foto entra com MinIO (issue #12). Você pode continuar sem foto.</p>
+      <p class="hint">
+        A foto e o dia de vencimento são definidos pelo aluno no primeiro login,
+        em <strong>/aluno/completar-perfil</strong> (câmera + reconhecimento facial).
+        Não há upload pelo admin — igual ao fluxo do Tatami v1.
+      </p>
       <div class="actions">
         <button type="button" class="ghost" (click)="back()">Voltar</button>
         <button type="button" (click)="goToStep4()">Continuar</button>

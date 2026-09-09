@@ -28,6 +28,7 @@ export interface Student {
   paymentDueDay?: number | null;
   photoUrl?: string | null;
   isActive: boolean;
+  isProfileComplete: boolean;
   sports: StudentSport[];
   createdAt: string;
 }

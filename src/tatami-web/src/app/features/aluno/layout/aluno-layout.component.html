@@ -1,0 +1,19 @@
+<div class="shell" [class.minimal]="hideChrome()">
+  @if (!hideChrome()) {
+    <header class="top">
+      <div>
+        <p class="brand">Tatami</p>
+        <p class="user">Olá, {{ userName }}</p>
+      </div>
+      <nav>
+        <a routerLink="/aluno" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Início
+        </a>
+        <button type="button" (click)="logout()">Sair</button>
+      </nav>
+    </header>
+  }
+  <main>
+    <router-outlet />
+  </main>
+</div>
