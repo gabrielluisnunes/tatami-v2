@@ -6,6 +6,8 @@ public class MinioOptions
 
     public string Endpoint { get; set; } = "http://localhost:9000";
 
+    public string PublicEndpoint { get; set; } = "";
+
     public string AccessKey { get; set; } = "tatami_minio";
 
     public string SecretKey { get; set; } = "tatami_minio_dev";

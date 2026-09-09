@@ -83,14 +83,31 @@ public class StudentProfileService : IStudentProfileService
         var previousPath = student.PhotoUrl;
 
         await using var stream = new MemoryStream(bytes);
-        await _photoStorage.UploadAsync(objectKey, stream, contentType, cancellationToken);
+        try
+        {
+            await _photoStorage.UploadAsync(objectKey, stream, contentType, cancellationToken);
+        }
+        catch (Exception)
+        {
+            throw new StudentException(
+                "Não foi possível enviar a foto para o storage. Verifique o MinIO e tente novamente.");
+        }
 
         student.PhotoUrl = objectKey;
         student.FaceDescriptor = request.FaceDescriptor.ToArray();
         student.PaymentDueDay = request.PaymentDueDay;
         student.UpdatedAt = DateTime.UtcNow;
 
-        await _studentRepository.UpdateAsync(student, cancellationToken);
+        try
+        {
+            await _studentRepository.UpdateAsync(student, cancellationToken);
+        }
+        catch (Exception)
+        {
+            await _photoStorage.DeleteAsync(objectKey, cancellationToken);
+            throw new StudentException(
+                "Foto enviada, mas falhou ao salvar o perfil no banco. Tente novamente.");
+        }
 
         if (!string.IsNullOrWhiteSpace(previousPath)
             && !string.Equals(previousPath, objectKey, StringComparison.Ordinal))

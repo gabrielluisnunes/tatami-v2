@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using Tatami.Application.Auth;
 using Tatami.Application.Billing;
 using Tatami.Application.Storage;
@@ -38,8 +38,13 @@ public static class DependencyInjection
                 "Connection string 'DefaultConnection' is not configured.");
         }
 
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder.EnableDynamicJson();
+        var dataSource = dataSourceBuilder.Build();
+        services.AddSingleton(dataSource);
+
         services.AddDbContext<TatamiDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(dataSource));
 
         services
             .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
@@ -113,18 +118,15 @@ public static class DependencyInjection
         var minio = configuration.GetSection(MinioOptions.SectionName).Get<MinioOptions>()
             ?? new MinioOptions();
 
-        services.AddSingleton<IAmazonS3>(_ =>
-        {
-            var config = new AmazonS3Config
-            {
-                ServiceURL = minio.Endpoint,
-                ForcePathStyle = minio.ForcePathStyle,
-                AuthenticationRegion = "us-east-1",
-            };
+        var dataClient = MinioS3Factory.CreateClient(minio, minio.Endpoint);
+        var publicEndpoint = MinioS3Factory.ResolvePublicEndpoint(minio);
+        var presignClient = MinioS3Factory.SameEndpoint(minio.Endpoint, publicEndpoint)
+            ? dataClient
+            : MinioS3Factory.CreateClient(minio, publicEndpoint);
 
-            var credentials = new BasicAWSCredentials(minio.AccessKey, minio.SecretKey);
-            return new AmazonS3Client(credentials, config);
-        });
+        services.AddSingleton<IAmazonS3>(dataClient);
+        services.AddSingleton(
+            new MinioPresignClient(presignClient, MinioS3Factory.ProtocolOf(publicEndpoint)));
 
         services.AddScoped<IObjectStorage, MinioObjectStorage>();
         services.AddScoped<IStudentPhotoStorage, StudentPhotoStorage>();

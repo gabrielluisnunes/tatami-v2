@@ -1,7 +1,6 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Tatami.Application.Storage;
 
 namespace Tatami.Infrastructure.Integrations.Storage;
@@ -9,11 +8,16 @@ namespace Tatami.Infrastructure.Integrations.Storage;
 public class MinioObjectStorage : IObjectStorage
 {
     private readonly IAmazonS3 _s3;
+    private readonly MinioPresignClient _presign;
     private readonly ILogger<MinioObjectStorage> _logger;
 
-    public MinioObjectStorage(IAmazonS3 s3, ILogger<MinioObjectStorage> logger)
+    public MinioObjectStorage(
+        IAmazonS3 s3,
+        MinioPresignClient presign,
+        ILogger<MinioObjectStorage> logger)
     {
         _s3 = s3;
+        _presign = presign;
         _logger = logger;
     }
 
@@ -87,8 +91,9 @@ public class MinioObjectStorage : IObjectStorage
             Key = objectKey,
             Verb = HttpVerb.GET,
             Expires = DateTime.UtcNow.Add(expiresIn),
+            Protocol = _presign.Protocol,
         };
 
-        return await _s3.GetPreSignedURLAsync(request);
+        return await _presign.S3.GetPreSignedURLAsync(request);
     }
 }
