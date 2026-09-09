@@ -5,6 +5,9 @@ Versionamento baseado em [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+
+- Fotos dos alunos na listagem admin: URL assinada do MinIO agora usa HTTP/SigV4 (antes saía `https://localhost:9000` e o thumb quebrava)
+
 ### Added
 
 - Domínio Academy expandido (owner, sport, monthly price, subscription status)

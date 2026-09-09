@@ -76,7 +76,7 @@ Detalhes do Docker: `infra/docker/README.md`
 ### MinIO + foto do aluno (issue #12)
 
 1. MinIO deve estar up (`docker compose ... up -d`) — a API cria os buckets `tatami-photos` / `tatami-contracts` no boot.
-2. Config em `appsettings.json` (`Minio:*`) ou `.env` (`Minio__Endpoint`, `Minio__AccessKey`, …).
+2. Config em `appsettings.json` (`Minio:*`) ou `.env` (`Minio__Endpoint`, `Minio__PublicEndpoint`, `Minio__AccessKey`, …). `PublicEndpoint` é a URL que o browser usa nas thumbs (em local: `http://localhost:9000`).
 3. Fluxo (paridade v1):
    - Admin cadastra o aluno **sem** foto.
    - Aluno faz login → é forçado a `/aluno/completar-perfil`.

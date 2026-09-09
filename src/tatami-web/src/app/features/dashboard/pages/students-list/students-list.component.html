@@ -49,8 +49,13 @@
           @for (student of students; track student.id) {
             <tr [class.inactive]="!student.isActive">
               <td class="photo-cell">
-                @if (student.photoUrl) {
-                  <img [src]="student.photoUrl" [alt]="student.fullName" class="thumb" />
+                @if (student.photoUrl && !failedPhotoIds.has(student.id)) {
+                  <img
+                    [src]="student.photoUrl"
+                    [alt]="student.fullName"
+                    class="thumb"
+                    (error)="onPhotoError(student.id)"
+                  />
                 } @else {
                   <span class="thumb placeholder">{{ initials(student.fullName) }}</span>
                 }
