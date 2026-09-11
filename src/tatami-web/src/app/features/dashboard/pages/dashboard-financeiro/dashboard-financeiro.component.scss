@@ -1,0 +1,53 @@
+.financial {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.toolbar, .actions, .month-nav, .filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.toolbar { justify-content: space-between; }
+h1 { margin: 0 0 0.25rem; font-size: 1.5rem; }
+h2 { font-size: 1.15rem; }
+.toolbar p, .muted { margin: 0; color: #71717a; }
+label { display: flex; flex-direction: column; gap: 0.4rem; }
+input, select { padding: 0.65rem 0.75rem; border: 1px solid #d4d4d8; border-radius: 8px; min-width: 0; }
+.filters label:first-child { flex: 1; min-width: 200px; }
+
+button {
+  padding: 0.65rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #18181b;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+button.ghost { background: transparent; border-color: #d4d4d8; color: #3f3f46; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
+article { padding: 1rem; background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; }
+.value { margin: 0.35rem 0; font-size: 1.5rem; font-weight: 600; }
+.table-wrap { overflow-x: auto; border: 1px solid #e4e4e7; border-radius: 12px; background: #fff; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 0.85rem 1rem; border-bottom: 1px solid #f4f4f5; text-align: left; vertical-align: top; font-size: 0.9rem; }
+th { color: #71717a; font-weight: 600; }
+.badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 999px; background: #f4f4f5; font-size: 0.75rem; }
+.overdue { background: #fef3c7; color: #92400e; }
+.paid { background: #dcfce7; color: #166534; }
+.error { color: #dc2626; }
+.success { color: #15803d; }
+
+dialog { width: min(520px, calc(100% - 3rem)); max-height: 85vh; overflow-y: auto; padding: 1.5rem; border: 1px solid #e4e4e7; border-radius: 12px; }
+dialog::backdrop { background: rgb(0 0 0 / 45%); }
+dialog h2 { margin-top: 0; }
+dialog p { line-height: 1.5; }
+fieldset { display: flex; flex-direction: column; gap: 0.75rem; border: 0; padding: 0; margin: 0 0 1rem; min-width: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

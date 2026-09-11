@@ -5,13 +5,17 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F27A36E3-4234-41FE-8CC1-0E9CD8195D2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Domain", "src/Tatami.Domain/Tatami.Domain.csproj", "{7AD3A9A3-ACB2-47AA-A392-21A219CC751F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Domain", "src\Tatami.Domain\Tatami.Domain.csproj", "{7AD3A9A3-ACB2-47AA-A392-21A219CC751F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Application", "src/Tatami.Application/Tatami.Application.csproj", "{D81CE92D-70D4-4319-A56A-73A3AA2CAE5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Application", "src\Tatami.Application\Tatami.Application.csproj", "{D81CE92D-70D4-4319-A56A-73A3AA2CAE5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Infrastructure", "src/Tatami.Infrastructure/Tatami.Infrastructure.csproj", "{4197286E-F4F2-40BC-BBC2-AFC37E9F72E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Infrastructure", "src\Tatami.Infrastructure\Tatami.Infrastructure.csproj", "{4197286E-F4F2-40BC-BBC2-AFC37E9F72E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Api", "src/Tatami.Api/Tatami.Api.csproj", "{DFB892FA-1DE8-43D4-B096-CFB80F86B226}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Api", "src\Tatami.Api\Tatami.Api.csproj", "{DFB892FA-1DE8-43D4-B096-CFB80F86B226}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EADBD84E-AE44-47C8-BECE-7479007FCEE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tatami.Tests", "tests\Tatami.Tests\Tatami.Tests.csproj", "{A84A051D-AC0F-4C9A-A67D-C6B9116CA300}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,11 +42,16 @@ Global
 		{DFB892FA-1DE8-43D4-B096-CFB80F86B226}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFB892FA-1DE8-43D4-B096-CFB80F86B226}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFB892FA-1DE8-43D4-B096-CFB80F86B226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A84A051D-AC0F-4C9A-A67D-C6B9116CA300}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A84A051D-AC0F-4C9A-A67D-C6B9116CA300}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A84A051D-AC0F-4C9A-A67D-C6B9116CA300}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A84A051D-AC0F-4C9A-A67D-C6B9116CA300}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7AD3A9A3-ACB2-47AA-A392-21A219CC751F} = {F27A36E3-4234-41FE-8CC1-0E9CD8195D2E}
 		{D81CE92D-70D4-4319-A56A-73A3AA2CAE5A} = {F27A36E3-4234-41FE-8CC1-0E9CD8195D2E}
 		{4197286E-F4F2-40BC-BBC2-AFC37E9F72E8} = {F27A36E3-4234-41FE-8CC1-0E9CD8195D2E}
 		{DFB892FA-1DE8-43D4-B096-CFB80F86B226} = {F27A36E3-4234-41FE-8CC1-0E9CD8195D2E}
+		{A84A051D-AC0F-4C9A-A67D-C6B9116CA300} = {EADBD84E-AE44-47C8-BECE-7479007FCEE8}
 	EndGlobalSection
 EndGlobal

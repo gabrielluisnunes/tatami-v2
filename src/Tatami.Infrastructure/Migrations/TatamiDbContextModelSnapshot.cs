@@ -173,6 +173,14 @@ namespace Tatami.Infrastructure.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("PixKey")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)");
+
+                    b.Property<string>("PixKeyType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<string>("Plan")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
@@ -209,6 +217,61 @@ namespace Tatami.Infrastructure.Migrations
                     b.HasIndex("StripeSubscriptionId");
 
                     b.ToTable("academies", (string)null);
+                });
+
+            modelBuilder.Entity("Tatami.Domain.Entities.Financial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AcademyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("DueDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("ReferenceMonth")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId", "DueDate");
+
+                    b.HasIndex("StudentId", "ReferenceMonth")
+                        .IsUnique();
+
+                    b.HasIndex("AcademyId", "Status", "DueDate");
+
+                    b.ToTable("financials", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_financials_Amount", "\"Amount\" > 0");
+
+                            t.HasCheckConstraint("CK_financials_ReferenceMonth", "EXTRACT(DAY FROM \"ReferenceMonth\") = 1");
+
+                            t.HasCheckConstraint("CK_financials_Status", "\"Status\" IN ('pending', 'paid', 'overdue', 'aguardando_confirmacao')");
+                        });
                 });
 
             modelBuilder.Entity("Tatami.Domain.Entities.Student", b =>
@@ -503,6 +566,21 @@ namespace Tatami.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Tatami.Domain.Entities.Financial", b =>
+                {
+                    b.HasOne("Tatami.Domain.Entities.Academy", null)
+                        .WithMany()
+                        .HasForeignKey("AcademyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Tatami.Domain.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

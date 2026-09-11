@@ -1,0 +1,56 @@
+<section class="financial-page">
+  <header>
+    <div><h1>Minhas mensalidades</h1><p>Pague com PIX e informe à academia após concluir a transferência.</p></div>
+    <button type="button" (click)="load()" [disabled]="loading() || !!busyId()">Atualizar</button>
+  </header>
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  @if (success()) { <p class="success" role="status">{{ success() }}</p> }
+  @if (loading()) {
+    <p role="status">Carregando mensalidades...</p>
+  } @else if (!error()) {
+    <div class="charges">
+      @for (charge of charges(); track charge.id) {
+        <article>
+          <div class="charge-heading">
+            <h2>{{ charge.referenceMonth | date:'MM/yyyy' }}</h2>
+            <span class="badge" [class.overdue]="charge.status === 'overdue'">{{ labels[charge.status] }}</span>
+          </div>
+          <p class="amount">{{ charge.amount | currency:'BRL':'symbol':'1.2-2' }}</p>
+          <p>Vencimento: {{ charge.dueDate | date:'dd/MM/yyyy' }}</p>
+          @if (charge.paidAt) { <p>Pago em {{ charge.paidAt | date:'dd/MM/yyyy':'-0300' }}</p> }
+          @if (charge.status === 'aguardando_confirmacao') {
+            <p>A academia está conferindo o recebimento. Não pague novamente.</p>
+          }
+          @if (payable(charge)) {
+            <div class="actions">
+              <button type="button" class="primary" (click)="openPix(charge)" [disabled]="!!busyId()">Pagar com PIX</button>
+              <button type="button" (click)="markAwaiting(charge)" [disabled]="!!busyId()">
+                {{ busyId() === charge.id ? 'Enviando...' : 'Já paguei' }}
+              </button>
+            </div>
+          }
+        </article>
+      } @empty {
+        <p>Nenhuma mensalidade disponível.</p>
+      }
+    </div>
+  }
+</section>
+
+<dialog #pixDialog aria-labelledby="pix-title" (close)="resetPix()">
+  <div class="dialog-heading"><h2 id="pix-title">Pagamento PIX</h2><button type="button" autofocus (click)="closePix()">Fechar</button></div>
+  @if (selected(); as charge) {
+    <p>Mensalidade {{ charge.referenceMonth | date:'MM/yyyy' }} · {{ charge.amount | currency:'BRL':'symbol':'1.2-2' }}</p>
+    @if (pixLoading()) { <p role="status">Gerando PIX...</p> }
+    @if (pixError()) { <p class="error" role="alert">{{ pixError() }}</p> }
+    @if (pix(); as code) {
+      @if (qrUrl()) { <img class="qr" [src]="qrUrl()" alt="QR Code para pagamento da mensalidade via PIX" width="300" height="300" /> }
+      <label for="pix-payload">PIX copia-e-cola</label>
+      <textarea id="pix-payload" readonly rows="4" [value]="code.payload"></textarea>
+      <button type="button" (click)="copyPix()">{{ copied() ? 'Código copiado!' : 'Copiar código' }}</button>
+      <p>Confira o destinatário e o valor no aplicativo do seu banco antes de pagar.</p>
+    }
+    <p>“Já paguei” apenas avisa a academia; não confirma automaticamente o recebimento.</p>
+    <button type="button" class="primary" (click)="markAwaiting(charge)" [disabled]="!!busyId()">{{ busyId() ? 'Enviando...' : 'Já paguei' }}</button>
+  }
+</dialog>

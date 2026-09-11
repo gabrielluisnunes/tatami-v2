@@ -1,3 +1,5 @@
+export type PixKeyType = 'celular' | 'email' | 'cpf' | 'cnpj' | 'aleatoria';
+
 export interface Academy {
   id: string;
   name: string;
@@ -8,6 +10,8 @@ export interface Academy {
   plan?: string | null;
   stripeCustomerId?: string | null;
   trialEndsAt?: string | null;
+  pixKey?: string | null;
+  pixKeyType?: PixKeyType | null;
 }
 
 export interface CreateOnboardingRequest {
@@ -34,6 +38,8 @@ export interface UpdateAcademyRequest {
   name: string;
   sport: string;
   monthlyPrice: number;
+  pixKey?: string | null;
+  pixKeyType?: PixKeyType | null;
 }
 
 export const SPORT_OPTIONS = [

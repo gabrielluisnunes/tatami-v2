@@ -8,7 +8,9 @@ public record CreateOnboardingRequest(
 public record UpdateAcademyRequest(
     string Name,
     string Sport,
-    decimal MonthlyPrice);
+    decimal MonthlyPrice,
+    string? PixKey = null,
+    string? PixKeyType = null);
 
 public record AcademyResponse(
     Guid Id,
@@ -19,7 +21,9 @@ public record AcademyResponse(
     Guid OwnerId,
     string? Plan,
     string? StripeCustomerId,
-    DateTime? TrialEndsAt);
+    DateTime? TrialEndsAt,
+    string? PixKey = null,
+    string? PixKeyType = null);
 
 public record OnboardingResponse(
     AcademyResponse Academy,

@@ -37,6 +37,15 @@
         <label>Cidade<input type="text" formControlName="city" /></label>
         <label>UF<input type="text" formControlName="state" maxlength="2" /></label>
 
+        <label>
+          Dia de vencimento
+          <input type="number" formControlName="paymentDueDay" min="1" max="31" step="1" aria-describedby="payment-due-day-hint" />
+        </label>
+        <p class="hint" id="payment-due-day-hint">Informe um dia de 1 a 31 ou deixe vazio para remover.</p>
+        @if (form.controls.paymentDueDay.invalid && (form.controls.paymentDueDay.touched || form.controls.paymentDueDay.dirty)) {
+          <p class="error">Dia de vencimento deve ser um número inteiro entre 1 e 31.</p>
+        }
+
         <h2>Esportes</h2>
         <div formArrayName="sports" class="sports">
           @for (group of sports.controls; track $index; let i = $index) {

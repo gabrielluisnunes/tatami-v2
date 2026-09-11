@@ -3,6 +3,7 @@ import { DashboardLayoutComponent } from './layout/dashboard-layout.component';
 import { DashboardHomeComponent } from './pages/dashboard-home/dashboard-home.component';
 import { DashboardAssinaturaComponent } from './pages/dashboard-assinatura/dashboard-assinatura.component';
 import { DashboardPerfilComponent } from './pages/dashboard-perfil/dashboard-perfil.component';
+import { DashboardFinanceiroComponent } from './pages/dashboard-financeiro/dashboard-financeiro.component';
 import { StudentEditComponent } from './pages/student-edit/student-edit.component';
 import { StudentEnrollComponent } from './pages/student-enroll/student-enroll.component';
 import { StudentsListComponent } from './pages/students-list/students-list.component';
@@ -28,12 +29,7 @@ export const dashboardRoutes: Routes = [
       },
       {
         path: 'financeiro',
-        component: DashboardStubComponent,
-        data: {
-          title: 'Financeiro',
-          issue: 21,
-          description: 'Cobranças mensais, PIX e inadimplência dos alunos.',
-        },
+        component: DashboardFinanceiroComponent,
       },
       {
         path: 'checkins',

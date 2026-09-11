@@ -28,6 +28,13 @@ public class AcademyConfiguration : IEntityTypeConfiguration<Academy>
             .IsRequired()
             .HasPrecision(10, 2);
 
+        builder.Property(academy => academy.PixKey)
+            .HasMaxLength(254);
+
+        builder.Property(academy => academy.PixKeyType)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.Property(academy => academy.SubscriptionStatus)
             .IsRequired()
             .HasMaxLength(50);

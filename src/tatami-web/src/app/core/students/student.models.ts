@@ -58,6 +58,7 @@ export interface UpdateStudentRequest {
   city?: string | null;
   state?: string | null;
   sports: StudentSportInput[];
+  paymentDueDay?: number | null;
 }
 
 export interface EnrollStudentResponse {

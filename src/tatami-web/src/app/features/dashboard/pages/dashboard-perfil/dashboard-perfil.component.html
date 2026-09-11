@@ -78,6 +78,26 @@
           Preço mensal (R$)
           <input type="number" formControlName="monthlyPrice" min="0" step="0.01" />
         </label>
+        <label>
+          Tipo de chave PIX
+          <select formControlName="pixKeyType">
+            <option value="">Sem chave PIX</option>
+            @for (type of pixKeyTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Chave PIX
+          <input type="text" formControlName="pixKey" maxlength="254" aria-describedby="pix-hint" />
+        </label>
+        <p class="hint" id="pix-hint">
+          Celular com código do país (ex.: +5511999999999); CPF/CNPJ somente números;
+          e-mail válido ou chave aleatória no formato UUID. Para remover, deixe chave e tipo vazios.
+        </p>
+        @if (academyForm.hasError('pix') && (academyForm.controls.pixKey.dirty || academyForm.controls.pixKeyType.dirty || academyForm.touched)) {
+          <p class="error">{{ academyForm.getError('pix') }}</p>
+        }
         @if (academyError) {
           <p class="error">{{ academyError }}</p>
         }

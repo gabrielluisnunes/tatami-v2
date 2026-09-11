@@ -172,6 +172,11 @@ public class StudentService : IStudentService
         var student = await _studentRepository.GetByIdAsync(studentId, academyId, cancellationToken)
             ?? throw new StudentException("Aluno não encontrado.");
 
+        if (request.PaymentDueDay is < 1 or > 31)
+        {
+            throw new StudentException("Dia de vencimento deve estar entre 1 e 31.");
+        }
+
         var sports = BuildSports(academyId, request.Sports);
         foreach (var sport in sports)
         {
@@ -187,6 +192,7 @@ public class StudentService : IStudentService
         student.Neighborhood = TrimOrNull(request.Neighborhood);
         student.City = TrimOrNull(request.City);
         student.State = TrimOrNull(request.State)?.ToUpperInvariant();
+        student.PaymentDueDay = request.PaymentDueDay;
         student.UpdatedAt = DateTime.UtcNow;
 
         student = await _studentRepository.UpdateWithSportsAsync(student, sports, cancellationToken);

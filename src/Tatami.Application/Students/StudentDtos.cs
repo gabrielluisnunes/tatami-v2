@@ -25,7 +25,8 @@ public record UpdateStudentRequest(
     string? Neighborhood,
     string? City,
     string? State,
-    IReadOnlyList<StudentSportInput> Sports);
+    IReadOnlyList<StudentSportInput> Sports,
+    int? PaymentDueDay = null);
 
 public record StudentSportResponse(
     string Sport,

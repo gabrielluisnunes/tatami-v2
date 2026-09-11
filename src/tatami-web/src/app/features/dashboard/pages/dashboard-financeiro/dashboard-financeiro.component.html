@@ -1,0 +1,126 @@
+<section class="financial">
+  <header class="toolbar">
+    <div>
+      <h1>Financeiro</h1>
+      <p>Cobranças e pagamentos da academia.</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="openManual()" [disabled]="!canOpenManual">Pagamento manual</button>
+      <button type="button" class="ghost" (click)="exportOverdue()" [disabled]="exporting || loading || saving || !overview">
+        {{ exporting ? 'Exportando...' : 'Exportar inadimplentes' }}
+      </button>
+    </div>
+  </header>
+
+  <nav class="month-nav" aria-label="Competência financeira">
+    <button type="button" class="ghost" aria-label="Mês anterior" (click)="navigateMonth(-1)" [disabled]="saving || selectedMonth === '0001-01'">Anterior</button>
+    <label>Competência
+      <input type="month" min="0001-01" max="9999-12" [ngModel]="selectedMonth" (ngModelChange)="changeMonth($event)" [disabled]="saving" />
+    </label>
+    <button type="button" class="ghost" aria-label="Próximo mês" (click)="navigateMonth(1)" [disabled]="saving || selectedMonth === '9999-12'">Próximo</button>
+    <button type="button" class="ghost" (click)="changeMonth(currentMonth)" [disabled]="saving || selectedMonth === currentMonth">Mês atual</button>
+  </nav>
+  @if (selectedMonth !== currentMonth) {
+    <p class="muted">Pagamentos manuais estão disponíveis somente na competência atual (horário de Brasília).</p>
+  }
+  @if (successMessage) { <p class="success" role="status">{{ successMessage }}</p> }
+  @if (errorMessage) {
+    <div role="alert" class="error">
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="ghost" (click)="load()" [disabled]="saving || loading">Recarregar dados</button>
+    </div>
+  }
+  @if (saving) { <p role="status">Registrando pagamento e atualizando dados...</p> }
+  @if (loading) {
+    <p role="status">Carregando financeiro de {{ monthLabel(selectedMonth) }}...</p>
+  } @else if (overview; as data) {
+    <div class="cards" aria-label="Resumo da competência">
+      <article><p class="muted">Recebido</p><p class="value">{{ money(data.received) }}</p></article>
+      <article><p class="muted">Inadimplência</p><p class="value">{{ money(data.overdueAmount) }}</p><p class="muted">{{ data.overdueCount }} inadimplente(s)</p></article>
+      <article><p class="muted">Cobranças do mês</p><p class="value">{{ data.chargeCount }}</p></article>
+      <article><p class="muted">Aguardando confirmação</p><p class="value">{{ data.awaitingCount }}</p></article>
+    </div>
+
+    <div class="filters">
+      <label>Buscar por nome ou e-mail<input type="search" [(ngModel)]="search" placeholder="Nome ou e-mail" /></label>
+      <label>Status
+        <select [(ngModel)]="statusFilter">
+          <option value="">Todos</option>
+          @for (status of statuses; track status) { <option [value]="status">{{ statusLabels[status] }}</option> }
+        </select>
+      </label>
+    </div>
+    <p class="muted">Os filtros afetam as duas tabelas. Os indicadores e a exportação consideram toda a competência selecionada.</p>
+
+    <section aria-labelledby="overdue-title">
+      <h2 id="overdue-title">Inadimplentes — {{ monthLabel(selectedMonth) }}</h2>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Cobranças em atraso da competência selecionada</caption>
+          <thead><tr><th scope="col">Aluno</th><th scope="col">Valor</th><th scope="col">Vencimento</th><th scope="col">Ações</th></tr></thead>
+          <tbody>
+            @for (row of overdueStudents; track row.studentId) {
+              <tr>
+                <td><strong>{{ row.studentName }}</strong><div class="muted">{{ row.email }}</div>@if (!row.isActive) { <span class="badge">Inativo</span> }</td>
+                <td>{{ row.amount === null ? '—' : money(row.amount) }}</td>
+                <td>{{ row.dueDate ? (row.dueDate | date: 'dd/MM/yyyy' : 'UTC') : '—' }}</td>
+                <td>@if (canMarkPaid(row)) { <button type="button" (click)="markPaid(row)" [disabled]="saving">Confirmar pagamento</button> }</td>
+              </tr>
+            } @empty { <tr><td colspan="4" class="muted">Nenhum inadimplente encontrado para os filtros selecionados.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="monthly-title">
+      <h2 id="monthly-title">Mensalidades — {{ monthLabel(selectedMonth) }}</h2>
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Alunos e cobranças da competência selecionada</caption>
+          <thead><tr><th scope="col">Aluno</th><th scope="col">Valor</th><th scope="col">Vencimento</th><th scope="col">Status</th><th scope="col">Pago em (Brasília)</th><th scope="col">Ações</th></tr></thead>
+          <tbody>
+            @for (row of filteredStudents; track row.studentId) {
+              <tr>
+                <td><strong>{{ row.studentName }}</strong><div class="muted">{{ row.email }}</div>@if (!row.isActive) { <span class="badge">Inativo</span> }</td>
+                <td>{{ row.amount === null ? '—' : money(row.amount) }}</td>
+                <td>{{ row.dueDate ? (row.dueDate | date: 'dd/MM/yyyy' : 'UTC') : '—' }}</td>
+                <td><span class="badge" [class.overdue]="row.status === 'overdue'" [class.paid]="row.status === 'paid'">{{ statusLabels[row.status] }}</span></td>
+                <td>{{ row.paidAt ? (row.paidAt | date: 'dd/MM/yyyy HH:mm' : '-0300') : '—' }}</td>
+                <td>@if (canMarkPaid(row)) { <button type="button" (click)="markPaid(row)" [disabled]="saving">Confirmar pagamento</button> }</td>
+              </tr>
+            } @empty { <tr><td colspan="6" class="muted">Nenhum aluno encontrado para os filtros selecionados.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</section>
+
+<dialog #manualDialog aria-labelledby="manual-title" aria-describedby="manual-month-hint" (cancel)="onDialogCancel($event)">
+  <h2 id="manual-title">Pagamento manual</h2>
+  <p id="manual-month-hint">O pagamento será registrado sempre na competência atual, {{ monthLabel(currentMonth) }} (Brasília), independentemente da data do pagamento informada. Não é possível escolher uma competência histórica aqui.</p>
+  <form [formGroup]="manualForm" (ngSubmit)="submitManual()">
+    <fieldset [disabled]="saving">
+      <label>Aluno
+        <select formControlName="studentId" autofocus>
+          <option value="">Selecione um aluno</option>
+          @for (row of overview?.students ?? []; track row.studentId) {
+            <option [value]="row.studentId">{{ row.studentName }} — {{ row.email }}{{ row.isActive ? '' : ' (inativo)' }}</option>
+          }
+        </select>
+      </label>
+      @if (manualForm.controls.studentId.touched && manualForm.controls.studentId.invalid) { <p class="error">Selecione um aluno.</p> }
+      <label>Valor (R$)<input type="text" inputmode="decimal" formControlName="amount" aria-describedby="amount-hint" /></label>
+      <p class="muted" id="amount-hint">Maior que zero, até R$ 99.999.999,99, com no máximo duas casas decimais.</p>
+      @if (manualForm.controls.amount.touched && manualForm.controls.amount.invalid) { <p class="error">Informe um valor válido, sem separador de milhar.</p> }
+      <label>Data e hora do pagamento (Brasília)<input type="datetime-local" formControlName="paidAt" [max]="maxPaidAt" /></label>
+      @if (manualForm.controls.paidAt.touched && manualForm.controls.paidAt.invalid) { <p class="error">Informe uma data e hora válidas, não futuras.</p> }
+    </fieldset>
+    @if (manualError) { <p class="error" role="alert">{{ manualError }}</p> }
+    @if (saving) { <p role="status">Registrando pagamento...</p> }
+    <div class="actions">
+      <button type="button" class="ghost" (click)="closeManual()" [disabled]="saving">Cancelar</button>
+      <button type="submit" [disabled]="saving">{{ saving ? 'Registrando...' : 'Registrar pagamento' }}</button>
+    </div>
+  </form>
+</dialog>
