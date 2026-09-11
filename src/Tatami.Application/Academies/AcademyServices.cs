@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Tatami.Application.Auth;
 using Tatami.Domain.Constants;
 using Tatami.Domain.Entities;
@@ -83,7 +84,9 @@ public class OnboardingService : IOnboardingService
             academy.OwnerId,
             academy.Plan,
             academy.StripeCustomerId,
-            academy.TrialEndsAt);
+            academy.TrialEndsAt,
+            academy.PixKey,
+            academy.PixKeyType?.ToSlug());
 }
 
 public class AcademyService : IAcademyService
@@ -150,14 +153,57 @@ public class AcademyService : IAcademyService
             throw new AcademyException("Academia não encontrada.");
         }
 
+        var (pixKey, pixKeyType) = ValidatePix(request.PixKey, request.PixKeyType);
+
         academy.Name = request.Name.Trim();
         academy.Sport = SportTypeExtensions.FromSlug(request.Sport);
         academy.MonthlyPrice = request.MonthlyPrice;
+        academy.PixKey = pixKey;
+        academy.PixKeyType = pixKeyType;
         academy.UpdatedAt = DateTime.UtcNow;
 
         await _academyRepository.UpdateAsync(academy, cancellationToken);
 
         return OnboardingService.MapAcademy(academy);
+    }
+
+    private static (string? Key, PixKeyType? Type) ValidatePix(string? key, string? type)
+    {
+        key = string.IsNullOrWhiteSpace(key) ? null : key.Trim();
+        type = string.IsNullOrWhiteSpace(type) ? null : type.Trim().ToLowerInvariant();
+
+        if (key is null && type is null)
+        {
+            return (null, null);
+        }
+
+        if (key is null || type is null)
+        {
+            throw new AcademyException("Informe a chave PIX e seu tipo, ou deixe ambos vazios.");
+        }
+
+        if (!PixKeyTypeExtensions.AllSlugs.Contains(type))
+        {
+            throw new AcademyException("Tipo de chave PIX inválido.");
+        }
+
+        var pixKeyType = PixKeyTypeExtensions.FromSlug(type);
+        var pattern = pixKeyType switch
+        {
+            PixKeyType.Celular => @"\A\+[1-9][0-9]{9,14}\z",
+            PixKeyType.Email => @"\A[^\s@]+@[^\s@]+\.[^\s@]+\z",
+            PixKeyType.Cpf => @"\A[0-9]{11}\z",
+            PixKeyType.Cnpj => @"\A[0-9]{14}\z",
+            PixKeyType.Aleatoria => @"\A[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\z",
+            _ => throw new AcademyException("Tipo de chave PIX inválido."),
+        };
+
+        if (key.Length > 254 || !Regex.IsMatch(key, pattern, RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1)))
+        {
+            throw new AcademyException("Chave PIX inválida para o tipo informado.");
+        }
+
+        return (key, pixKeyType);
     }
 }
 

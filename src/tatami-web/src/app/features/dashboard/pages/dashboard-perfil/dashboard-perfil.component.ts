@@ -1,12 +1,36 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Academy, SPORT_OPTIONS } from '../../../../core/academy/academy.models';
+import { Academy, PixKeyType, SPORT_OPTIONS } from '../../../../core/academy/academy.models';
 import { AcademyService } from '../../../../core/academy/academy.service';
 import { PLAN_DISPLAY_NAMES } from '../../../../core/academy/saas-plans';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { environment } from '../../../../../environments/environment';
+
+const pixValidator: ValidatorFn = control => {
+  const key = (control.get('pixKey')?.value as string).trim();
+  const type = control.get('pixKeyType')?.value as PixKeyType | '';
+  if (!key && !type) {
+    return null;
+  }
+
+  if (!key || !type) {
+    return { pix: 'Informe a chave PIX e seu tipo, ou deixe ambos vazios.' };
+  }
+
+  const patterns: Record<PixKeyType, RegExp> = {
+    celular: /^\+[1-9][0-9]{9,14}$/,
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    cpf: /^[0-9]{11}$/,
+    cnpj: /^[0-9]{14}$/,
+    aleatoria: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+  };
+
+  return key.length <= 254 && patterns[type]?.test(key)
+    ? null
+    : { pix: 'Chave PIX inválida para o tipo informado.' };
+};
 
 @Component({
   selector: 'app-dashboard-perfil',
@@ -20,6 +44,13 @@ export class DashboardPerfilComponent implements OnInit {
   private readonly academyService = inject(AcademyService);
 
   readonly sports = SPORT_OPTIONS;
+  readonly pixKeyTypes = [
+    { value: 'celular', label: 'Celular' },
+    { value: 'email', label: 'E-mail' },
+    { value: 'cpf', label: 'CPF' },
+    { value: 'cnpj', label: 'CNPJ' },
+    { value: 'aleatoria', label: 'Aleatória' },
+  ] as const;
   readonly enforceSubscription = environment.enforceSubscription;
 
   academy: Academy | null = null;
@@ -53,7 +84,9 @@ export class DashboardPerfilComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(2)]],
     sport: ['jiu-jitsu', Validators.required],
     monthlyPrice: [0, [Validators.required, Validators.min(0)]],
-  });
+    pixKey: [''],
+    pixKeyType: this.formBuilder.nonNullable.control<PixKeyType | ''>(''),
+  }, { validators: pixValidator });
 
   ngOnInit(): void {
     const user = this.authService.getUser();
@@ -69,6 +102,8 @@ export class DashboardPerfilComponent implements OnInit {
           name: academy.name,
           sport: academy.sport,
           monthlyPrice: academy.monthlyPrice,
+          pixKey: academy.pixKey ?? '',
+          pixKeyType: academy.pixKeyType ?? '',
         });
         this.loading = false;
       },
@@ -175,7 +210,12 @@ export class DashboardPerfilComponent implements OnInit {
     this.academyError = '';
     this.academyLoading = true;
 
-    this.academyService.updateMyAcademy(this.academyForm.getRawValue()).subscribe({
+    const value = this.academyForm.getRawValue();
+    this.academyService.updateMyAcademy({
+      ...value,
+      pixKey: value.pixKey.trim() || null,
+      pixKeyType: value.pixKeyType || null,
+    }).subscribe({
       next: academy => {
         this.academy = academy;
         this.academyLoading = false;

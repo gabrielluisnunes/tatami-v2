@@ -44,6 +44,11 @@ export class StudentEditComponent implements OnInit {
     neighborhood: [''],
     city: [''],
     state: [''],
+    paymentDueDay: this.formBuilder.control<number | null>(null, [
+      Validators.min(1),
+      Validators.max(31),
+      Validators.pattern(/^[0-9]+$/),
+    ]),
     sports: this.formBuilder.array([this.createSportGroup()]),
   });
 
@@ -122,6 +127,7 @@ export class StudentEditComponent implements OnInit {
           neighborhood: student.neighborhood ?? '',
           city: student.city ?? '',
           state: student.state ?? '',
+          paymentDueDay: student.paymentDueDay ?? null,
         });
         this.loading = false;
       },
@@ -182,6 +188,7 @@ export class StudentEditComponent implements OnInit {
         neighborhood: value.neighborhood || null,
         city: value.city || null,
         state: value.state || null,
+        paymentDueDay: value.paymentDueDay,
         sports,
       })
       .subscribe({

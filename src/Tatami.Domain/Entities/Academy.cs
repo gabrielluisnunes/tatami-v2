@@ -13,6 +13,10 @@ public class Academy : BaseEntity
 
     public decimal MonthlyPrice { get; set; }
 
+    public string? PixKey { get; set; }
+
+    public PixKeyType? PixKeyType { get; set; }
+
     public string SubscriptionStatus { get; set; } = Constants.SubscriptionStatus.Trial;
 
     public string? StripeCustomerId { get; set; }
